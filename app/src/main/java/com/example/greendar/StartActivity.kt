@@ -23,8 +23,9 @@ class StartActivity : AppCompatActivity(){
 
         //Login Activity 연결
         binding.btnLogin.setOnClickListener {
-            //startActivity(Intent(this@StartActivity, LoginActivity::class.java))
-            startActivity(Intent(this@StartActivity, ProfileSettingActivity::class.java))
+            startActivity(Intent(this@StartActivity, LoginActivity::class.java))
+            //startActivity(Intent(this@StartActivity, ProfileSettingActivity::class.java))
+            
         }
     }
 
