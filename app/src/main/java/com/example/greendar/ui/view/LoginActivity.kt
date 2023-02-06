@@ -1,8 +1,10 @@
-package com.example.greendar
+package com.example.greendar.ui.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greendar.databinding.ActivityLoginBinding
 import java.util.regex.Pattern
@@ -19,11 +21,17 @@ class LoginActivity:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.textInputEditTextEmail.addTextChangedListener(emailListener)
         binding.textInputEditTextPassword.addTextChangedListener(passwordListener)
+
+        binding.btnBack.setOnClickListener {
+            startActivity(Intent(this@LoginActivity, StartActivity::class.java))
+        }
 
     }
 
@@ -35,7 +43,7 @@ class LoginActivity:AppCompatActivity() {
         return false
     }
 
-    //이메일 check해서 error 띄움
+    //이메일 check 해서 error 띄움
     private val emailListener = object: TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -96,9 +104,21 @@ class LoginActivity:AppCompatActivity() {
     }
 
 
-    //비민번호 check 해서 error 띄움
+    //비밀 번호 check 해서 error 띄움
     fun flagCheck(){
         binding.btnLogin.isEnabled = (emailFlag && passwordFlag)
     }
+
+    /*서버 check
+    val postUser = PostModel(1, "sore")
+    private fun postUserInfo(postUser: PostModel){
+        RetrofitAPI.post.postUsers(postUser)
+            .enqueue(object:retrofit2.Callback<PostResult>{
+                override fun onResponse(call: Call<PostResult>, response: Response<PostResult>) {
+
+                }
+            })
+    }
+    */
 
 }

@@ -1,14 +1,15 @@
-package com.example.greendar
+package com.example.greendar.ui.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
-import com.example.greendar.databinding.ActivityChangePasswordBinding
+import com.example.greendar.databinding.ActivityRegisterPasswordBinding
 
-class ChangePasswordActivity:AppCompatActivity() {
-
-    private lateinit var binding:ActivityChangePasswordBinding
+class RegisterPasswordActivity:AppCompatActivity() {
+    private lateinit var binding:ActivityRegisterPasswordBinding
 
     //check flag
     private var passwordFlag = false
@@ -17,16 +18,21 @@ class ChangePasswordActivity:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityChangePasswordBinding.inflate(layoutInflater)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        binding = ActivityRegisterPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.textInputEditTextPassword.addTextChangedListener(passwordListener)
         binding.textInputEditTextPasswordConfirm.addTextChangedListener(passwordConfirmListener)
+
+        binding.btnBack.setOnClickListener{
+            startActivity(Intent(this@RegisterPasswordActivity, RegisterPasswordActivity::class.java))
+        }
+
     }
 
-
-
-    //password check 해서 error 띄움
+    //password check (changePassword 재활용)
     private val passwordListener = object: TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -71,8 +77,8 @@ class ChangePasswordActivity:AppCompatActivity() {
         }
     }
 
-    //password double check
-    private val passwordConfirmListener=object:TextWatcher{
+    //password confirm check (changePassword 재활용)
+    private val passwordConfirmListener=object: TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         override fun afterTextChanged(s: Editable?) {
@@ -96,8 +102,8 @@ class ChangePasswordActivity:AppCompatActivity() {
         }
     }
 
-    //password check 해서 error 띄움
-    fun flagCheck(){
-        binding.btnSubmit.isEnabled = (passwordFlag && passwordConfirmFlag)
+    private fun flagCheck(){
+        binding.btnRegister.isEnabled = (passwordFlag && passwordConfirmFlag)
     }
+
 }

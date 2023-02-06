@@ -1,59 +1,40 @@
-package com.example.greendar
+package com.example.greendar.ui.view
 
+import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
-import com.example.greendar.databinding.ActivityRegisterBinding
+import com.example.greendar.databinding.ActivityChangePasswordBinding
 
-class RegisterActivity:AppCompatActivity() {
+class ChangePasswordActivity:AppCompatActivity() {
 
-    private lateinit var binding: ActivityRegisterBinding
+    private lateinit var binding:ActivityChangePasswordBinding
 
     //check flag
-    private var emailFlag = false
     private var passwordFlag = false
     private var passwordConfirmFlag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityRegisterBinding.inflate(layoutInflater)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        binding = ActivityChangePasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.textInputEditTextEmail.addTextChangedListener(emailListener)
         binding.textInputEditTextPassword.addTextChangedListener(passwordListener)
         binding.textInputEditTextPasswordConfirm.addTextChangedListener(passwordConfirmListener)
 
-    }
-
-    //e-mail check (login 재사용)
-    private val emailListener = object: TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        override fun afterTextChanged(s: Editable?) {
-            if(s != null){
-                when{
-                    s.isEmpty() ->{
-                        binding.textInputLayoutEmail.error = "Please enter you e-mail"
-                        emailFlag=false
-                    }
-                    !LoginActivity().emailRegex(s.toString()) ->{
-                        binding.textInputLayoutEmail.error = "e-mail format is incorrect"
-                        emailFlag = false
-                    }
-                    else->{
-                        binding.textInputLayoutEmail.error = null
-                        emailFlag = true
-                    }
-                }
-                flagCheck()
-            }
+        binding.btnBack.setOnClickListener{
+            startActivity(Intent(this@ChangePasswordActivity, LoginActivity::class.java))
         }
     }
 
-    //password check (changePassword 재활용)
+
+
+    //password check 해서 error 띄움
     private val passwordListener = object: TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -98,7 +79,7 @@ class RegisterActivity:AppCompatActivity() {
         }
     }
 
-    //password confirm check (changePassword 재활용)
+    //password double check
     private val passwordConfirmListener=object:TextWatcher{
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -123,8 +104,8 @@ class RegisterActivity:AppCompatActivity() {
         }
     }
 
+    //password check 해서 error 띄움
     fun flagCheck(){
-        binding.btnRegister.isEnabled = (emailFlag && passwordFlag && passwordConfirmFlag)
+        binding.btnSubmit.isEnabled = (passwordFlag && passwordConfirmFlag)
     }
-
 }
