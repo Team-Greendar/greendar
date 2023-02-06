@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="20dp">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/left_point"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#00000000" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="23dp"
+            android:text="Change Email"
+            android:layout_marginLeft="85dp"
+            android:textColor="#ABABAB"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <EditText
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:layout_width="337dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:text="Done"
+        android:layout_marginTop="20dp"
+        android:textColor="#A8A6A6"/>
+
+
+
+</LinearLayout>
+
