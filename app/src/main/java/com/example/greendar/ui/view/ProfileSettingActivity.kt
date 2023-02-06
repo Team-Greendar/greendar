@@ -1,8 +1,9 @@
-package com.example.greendar
+package com.example.greendar.ui.view
 
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.Window
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +21,8 @@ class ProfileSettingActivity:AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         binding = ActivityProfileSettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
