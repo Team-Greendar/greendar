@@ -1,7 +1,8 @@
-package com.example.greendar
+package com.example.greendar.ui.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greendar.databinding.ActivityStartBinding
 
@@ -11,6 +12,8 @@ class StartActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         //바인딩
         binding = ActivityStartBinding.inflate(layoutInflater)
