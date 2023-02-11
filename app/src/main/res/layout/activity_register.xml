@@ -66,20 +66,78 @@
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_layout_password"
+            style="@style/MyTextInputLayout"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_layout_email"
+
+            app:passwordToggleEnabled="true"
+            app:counterEnabled="true"
+            app:counterMaxLength="8"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/text_input_editText_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:paddingTop="25dp"
+                android:paddingBottom="5dp"
+                android:hint="Password"
+                android:inputType="textPassword"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_layout_password_confirm"
+            style="@style/MyTextInputLayout"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_layout_password"
+
+            app:passwordToggleEnabled="true"
+            app:counterEnabled="true"
+            app:counterMaxLength="8"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/text_input_editText_password_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:paddingTop="25dp"
+                android:paddingBottom="5dp"
+                android:hint="Confirm Password"
+                android:inputType="textPassword"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
 
         <android.widget.Button
-            android:id="@+id/btn_sendNumber"
+            android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/button_green_background"
-            android:text="Get certification code via e-mail"
+            android:text="Register"
             android:textAllCaps="false"
             android:textColor="@color/semi_white"
             android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_input_layout_email"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_layout_password_confirm"
             android:layout_marginTop="40dp"
             android:enabled="false"
             />
@@ -92,7 +150,7 @@
             android:gravity="center_horizontal|center_vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_sendNumber">
+            app:layout_constraintTop_toBottomOf="@id/btn_register">
 
             <View
                 android:layout_width="150dp"

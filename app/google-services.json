@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "923471445103",
+    "project_id": "greendar-18a87",
+    "storage_bucket": "greendar-18a87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:923471445103:android:0962fa16c0ca1cfa43619a",
+        "android_client_info": {
+          "package_name": "com.example.greendar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "923471445103-g69s7l8gp5qjh8k3phhb6fqnsojoee16.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.greendar",
+            "certificate_hash": "4e95bc9a9df28180bb595a0d1353ed6c9acd8ab8"
+          }
+        },
+        {
+          "client_id": "923471445103-3a9kobr8u4fjck2t6lqcf7sn1qghd6d7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRx9bo1ms3hPUhjGLh3kPd5gIFdzOXQ9I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "923471445103-3a9kobr8u4fjck2t6lqcf7sn1qghd6d7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -23,6 +23,7 @@
         <activity android:name=".ui.view.LoginActivity"/>
         <activity android:name=".ui.view.ChangePasswordActivity"/>
         <activity android:name=".ui.view.ProfileSettingActivity"/>
+        <activity android:name=".authentication.MyApplication"/>
         <activity
             android:name=".ui.view.StartActivity"
             android:exported="true">

@@ -8,6 +8,7 @@ import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greendar.databinding.ActivityRegisterPasswordBinding
 
+
 class RegisterPasswordActivity:AppCompatActivity() {
     private lateinit var binding:ActivityRegisterPasswordBinding
 
@@ -17,6 +18,7 @@ class RegisterPasswordActivity:AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 

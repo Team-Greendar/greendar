@@ -76,7 +76,6 @@ class ProfileSettingActivity:AppCompatActivity() {
 
     //갤러리에서 사진 가져오기
     private fun navigatePhoto(){
-        //TODO
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
         launcher.launch(intent)
