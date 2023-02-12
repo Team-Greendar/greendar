@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/text_day"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1.3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+<!-- 날짜 내 텍스트 및 이미지 입력되는 곳 , todo_Bar는 여기서 만들면 되지 않을까나   -->
+<!--    <TextView-->
+<!--        android:id="@+id/text_memo"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="aaaaa"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/text_day"/>-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/imageview"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:src="@mipmap/ic_launcher"-->
+<!--        android:adjustViewBounds="true"-->
+<!--        android:scaleType="fitCenter"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/text_memo"/>-->
+
+    <!-- 날짜 내 텍스트 및 이미지 입력되는 곳 , todo_Bar는 여기서 만들면 되지 않을까나   -->
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#ccc"
+        app:layout_constraintTop_toBottomOf="@id/text_day"/>
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#ccc"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
