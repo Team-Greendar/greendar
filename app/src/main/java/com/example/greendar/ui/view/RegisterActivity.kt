@@ -7,9 +7,15 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.Window
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.example.greendar.R
 import com.example.greendar.databinding.ActivityRegisterBinding
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -18,10 +24,7 @@ class RegisterActivity:AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var auth:FirebaseAuth
 
-    //check flag
     private var emailFlag = false
-    private var passwordFlag = false
-    private var passwordConfirmFlag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,44 +35,68 @@ class RegisterActivity:AppCompatActivity() {
         setContentView(binding.root)
 
         binding.textInputEditTextEmail.addTextChangedListener(emailListener)
-        binding.textInputEditTextPassword.addTextChangedListener(passwordListener)
-        binding.textInputEditTextPasswordConfirm.addTextChangedListener(passwordConfirmListener)
 
         binding.btnBack.setOnClickListener{
             startActivity(Intent(this@RegisterActivity, StartActivity::class.java))
         }
 
-
-        auth = Firebase.auth
+        //일반 회원 가입 하기 - 이메일 정보 가지고 다음 페이지 로 넘어감
         binding.btnRegister.setOnClickListener {
-            //회원 가입 하기
-            val email = binding.textInputEditTextEmail.text.toString()
-            val password = binding.textInputEditTextPassword.text.toString()
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this){task ->
-                    if(task.isSuccessful){
-                        //계정 등록 성공
-                        auth.currentUser?.sendEmailVerification()
-                            ?.addOnCompleteListener { sendTask ->
-                                if(sendTask.isSuccessful){
-                                    //인증 메일 발송 성공
-                                    Toast.makeText(this, "인증 메일을 확인해야 회원가입이 완료 됩니다.\n이메일 확인해주고, 로그인 해서 Greendar를 사용해주세요", Toast.LENGTH_SHORT).show()
-                                    //TODO: 이메일 인증이 완료 되었 으면, 로그인 창으로 이동
-                                } else{
-                                    //인증 메일 발송 실패
-                                    Toast.makeText(this, "인증 메일 발송 실패. 이메일 주소를 다시 확인해주세요. ", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                    } else{
-                        //계정 등록 실패
-                        Log.w("kkang", "createUserWithEmail:failure", task.exception)
-                        Toast.makeText(this, "회원 가입 실패", Toast.LENGTH_SHORT).show()
-                    }
-                }
+            val username = intent.getStringExtra("username").toString()
+            Log.d("Yuri", "Normal Register : Send E-mail : ${binding.textInputEditTextEmail.text.toString()}")
+            Log.d("Yuri", "Username : $username")
+
+            val intent = Intent(this, RegisterPasswordActivity::class.java)
+            intent.putExtra("normalEmail", binding.textInputEditTextEmail.text.toString())
+            intent.putExtra("username", username)
+            startActivity(Intent(this@RegisterActivity, RegisterPasswordActivity::class.java))
+            startActivity(intent)
         }
 
+        auth=Firebase.auth
+        //Google 로그인 결과 처리
+        val requestLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        )
+        {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            try{
+                val account = task.getResult(ApiException::class.java)!!
+                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+                auth.signInWithCredential(credential)
+                    .addOnCompleteListener(this){task->
+                        if(task.isSuccessful){
+                            //구글 로그인 성공
+                            Toast.makeText(this, "register complete", Toast.LENGTH_SHORT).show()
+                            //TODO: 이메일 정보 가지고 다음 으로 넘어 가기
+                            Log.d("Yuri", "Google Register : Send E-mail and Provider")
+                            val intent = Intent(this, RegisterPasswordActivity::class.java)
+                            intent.putExtra("googleEmail", auth.currentUser?.email.toString())
+                            Log.d("Yuri", "Google e-mail : ${auth.currentUser?.email}")
+                            Log.d("Yuri", "Provider : ${auth.currentUser!!.providerData[0]}")
+                            Log.d("Yuri", "User Uid : ${auth.currentUser?.uid}")
+                            startActivity(Intent(this@RegisterActivity, RegisterPasswordActivity::class.java))
+                        } else{
+                            //구글 로그인 실패
+                            Toast.makeText(this, "register failed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            } catch(e : ApiException){
+                //예외 처리
+            }
+        }
 
-
+        binding.btnRegisterGoogle.setOnClickListener {
+            //구글 회원 가입  하기 - firebase 로 인증 진행
+            val gso = GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .requestProfile()
+                .build()
+            val signInIntent = GoogleSignIn.getClient(this, gso).signInIntent
+            requestLauncher.launch(signInIntent)
+        }
     }
 
     //e-mail check (login 재사용)
@@ -97,78 +124,9 @@ class RegisterActivity:AppCompatActivity() {
         }
     }
 
-    //password check (changePassword 재활용)
-    private val passwordListener = object: TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        override fun afterTextChanged(s: Editable?) {
-            if(s != null){
-                when{
-                    s.isEmpty()->{
-                        binding.textInputLayoutPassword.error = "please enter your password"
-                        passwordFlag=false
-                    }
-                    !LoginActivity().passwordRegex(s.toString())->{
-                        binding.textInputLayoutPassword.error = "English uppercase/lowercase letters, numbers (max 8 letters)"
-                        passwordFlag = false
-                        when{
-                            binding.textInputEditTextPasswordConfirm.text.toString() != binding.textInputEditTextPassword.text.toString() ->{
-                                binding.textInputLayoutPasswordConfirm.error = "wrong password"
-                                passwordConfirmFlag = false
-                            }
-                            else ->{
-                                binding.textInputLayoutPasswordConfirm.error = null
-                                passwordConfirmFlag = true
-                            }
-                        }
-                    }
-                    else->{
-                        binding.textInputLayoutPassword.error=null
-                        passwordFlag=true
-                        when{
-                            binding.textInputEditTextPasswordConfirm.text.toString() != binding.textInputEditTextPassword.text.toString() ->{
-                                binding.textInputLayoutPasswordConfirm.error = "wrong password"
-                                passwordConfirmFlag = false
-                            }
-                            else ->{
-                                binding.textInputLayoutPasswordConfirm.error = null
-                                passwordConfirmFlag = true
-                            }
-                        }
-                    }
-                }
-                flagCheck()
-            }
-        }
-    }
-
-    //password confirm check (changePassword 재활용)
-    private val passwordConfirmListener=object: TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        override fun afterTextChanged(s: Editable?) {
-            if(s!=null){
-                if(s.isEmpty()){
-                    binding.textInputLayoutPasswordConfirm.error = "please enter your password"
-                    passwordConfirmFlag = false
-                }
-
-                else if(binding.textInputEditTextPasswordConfirm.text.toString() != binding.textInputEditTextPassword.text.toString()){
-                    binding.textInputLayoutPasswordConfirm.error = "wrong password"
-                    passwordConfirmFlag = false
-                }
-
-                else{
-                    binding.textInputLayoutPasswordConfirm.error = null
-                    passwordConfirmFlag = true
-                }
-                flagCheck()
-            }
-        }
-    }
 
     private fun flagCheck(){
-        binding.btnRegister.isEnabled = (emailFlag && passwordFlag && passwordConfirmFlag)
+        binding.btnRegister.isEnabled = emailFlag
     }
 
 }

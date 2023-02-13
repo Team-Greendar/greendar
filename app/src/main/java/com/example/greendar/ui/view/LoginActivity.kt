@@ -52,18 +52,17 @@ class LoginActivity:AppCompatActivity() {
         binding.btnLogin.setOnClickListener {
             val email = binding.textInputEditTextEmail.text.toString()
             val password = binding.textInputEditTextPassword.text.toString()
-            Log.d("kkang", "email:$email, password:$password")
+            Log.d("Yuri", "email:$email, password:$password")
 
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this){task->
                     //정보 있음
                     if(task.isSuccessful){
                         if(checkAuth()){
-                            //user 가 이메일 인증 까지 완료 했을 때 (우리는 다음 페이지 로 넘어감)
-                            //TODO
+                            //TODO user 가 이메일 인증 까지 완료 했을 때 (우리는 메인 페이지 로 넘어감)
                             Toast.makeText(this, "log in complete", Toast.LENGTH_SHORT).show()
                         } else{
-                            //이메일 인증을 완료하지 않음
+                            //이메일 인증을 완료 하지 않음
                             Toast.makeText(this, "이메일 인증을 완료 하지 않음", Toast.LENGTH_SHORT).show()
                         }
                     }

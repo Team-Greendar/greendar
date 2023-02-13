@@ -19,16 +19,14 @@ class StartActivity : AppCompatActivity(){
         binding = ActivityStartBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //Register Activity 연결
+        //Username Activity 연결
         binding.btnRegister.setOnClickListener {
-            startActivity(Intent(this@StartActivity, RegisterActivity::class.java))
+            startActivity(Intent(this@StartActivity, UsernameActivity::class.java))
         }
 
         //Login Activity 연결
         binding.btnLogin.setOnClickListener {
             startActivity(Intent(this@StartActivity, LoginActivity::class.java))
-            //startActivity(Intent(this@StartActivity, ProfileSettingActivity::class.java))
-            
         }
     }
 

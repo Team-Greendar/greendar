@@ -3,6 +3,7 @@ package com.example.greendar.ui.view
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Window
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -22,12 +23,16 @@ class ProfileSettingActivity:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
 
         binding = ActivityProfileSettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         init()
+
+        Log.d("Yuri", "username : ${intent.getStringExtra("username").toString()}")
+        binding.textInputEditTextName.setText(intent.getStringExtra("username"))
+
 
         //여기 입니다....(1)
         binding.btnCamera.setOnClickListener{
@@ -74,7 +79,7 @@ class ProfileSettingActivity:AppCompatActivity() {
         }
     }
 
-    //갤러리에서 사진 가져오기
+    //갤러리 에서 사진 가져 오기
     private fun navigatePhoto(){
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"

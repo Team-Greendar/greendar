@@ -17,13 +17,14 @@
         android:theme="@style/Theme.Greendar"
         tools:targetApi="31">
 
+        <activity android:name=".ui.view.UsernameActivity"/>
         <activity android:name=".ui.view.RegisterActivity"/>
         <activity android:name=".ui.view.RegisterPasswordActivity"/>
-        <activity android:name=".ui.view.RegisterCertificationNumberActivity"/>
         <activity android:name=".ui.view.LoginActivity"/>
         <activity android:name=".ui.view.ChangePasswordActivity"/>
         <activity android:name=".ui.view.ProfileSettingActivity"/>
-        <activity android:name=".authentication.MyApplication"/>
+
+
         <activity
             android:name=".ui.view.StartActivity"
             android:exported="true">

@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace 'com.example.greendar'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.greendar"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -38,14 +38,14 @@ android {
 }
 
 dependencies {
-
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'de.hdodenhof:circleimageview:2.2.0'  //동그라미 프로필
-    implementation 'com.google.android.material:material:1.2.1'  //edittext 커스텀
-    implementation 'com.google.android.material:material:1.5.0-alpha02'  //bottom sheet navigation
+
+    implementation 'de.hdodenhof:circleimageview:2.2.0'  //동그 라미 프로필
+    implementation 'com.google.android.material:material:1.8.0'  //edittext 커스텀
+    implementation 'com.google.android.material:material:1.9.0-alpha01'  //bottom sheet navigation
 
 
     //로그인, 회원 가입 설정
