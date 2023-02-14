@@ -8,10 +8,15 @@ import android.util.Log
 import android.view.Window
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.greendar.data.api.RetrofitAPI
+import com.example.greendar.data.model.PostRegisterUser
+import com.example.greendar.data.model.ResponseRegisterUser
 import com.example.greendar.databinding.ActivityRegisterPasswordBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import retrofit2.Call
+import retrofit2.Response
 
 /*
 TODO : 일반 회원 가입 - 비밀 번호 받고 인증 메일 보내기, 인증 해야 다음 페이지 로 넘어갈 수 있다.
@@ -75,11 +80,15 @@ class RegisterPasswordActivity:AppCompatActivity() {
                             .addOnCompleteListener(this) { task ->
                                 //계정 일치
                                 if (task.isSuccessful) {
-                                    //TODO : 이 버튼 누르면 api 정보 전송 되게 설정 필요 (내일 하기)
                                     val username = intent.getStringExtra("username").toString()
                                     Log.d("Yuri", "이메일 인증 O, 계정 일치 O")
                                     Log.d("Yuri", "email : ${binding.tvEmail.text}, password : ${binding.textInputEditTextPassword.text.toString()}")
+                                    Log.d("Yuri", "uid: ${auth.currentUser?.uid.toString()}")
                                     Log.d("Yuri", "username : $username")
+
+                                    //API
+                                    val postRegister = PostRegisterUser(binding.tvEmail.text.toString(), auth.currentUser?.uid.toString(), username, binding.textInputEditTextPassword.text.toString())
+                                    postUserInfo(postRegister)
 
                                     val intent = Intent(this, ProfileSettingActivity::class.java)
                                     intent.putExtra("username", username)
@@ -107,6 +116,7 @@ class RegisterPasswordActivity:AppCompatActivity() {
                 }
             }
 
+    //이메일 인증 했는지 check
     private fun checkAuth(): Boolean {
         val currentUser = auth.currentUser
         return currentUser?.let {
@@ -114,6 +124,36 @@ class RegisterPasswordActivity:AppCompatActivity() {
         } ?: let {
             false
         }
+    }
+
+    //API
+    private fun postUserInfo(postRegister:PostRegisterUser){
+        RetrofitAPI.post.postRegisterUser(postRegister)
+            .enqueue(object:retrofit2.Callback<ResponseRegisterUser>{
+                override fun onResponse(
+                    call: Call<ResponseRegisterUser>,
+                    response: Response<ResponseRegisterUser>
+                ) {
+                    if(response.body()?.header?.status == 200){
+                        if(response.body()?.header?.message == "SUCCESS"){
+                            Log.e("Yuri", "로그인 성공")
+                            //TODO 다음 으로 넘어감
+                        }
+                        else{
+                            Log.e("Yuri", "이미 존재하는 닉네임이다")
+                            //TODO
+                        }
+                    }
+
+                }
+                override fun onFailure(
+                    call: Call<ResponseRegisterUser>,
+                    t: Throwable
+                ) {
+                    Log.e("Yuri", "연결 실패")
+                    Log.e("Yuri", t.toString())
+                }
+            })
     }
 
     //password check (changePassword 재활용)
