@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greendar.R
+import com.example.greendar.data.api.RetrofitAPI
+import com.example.greendar.data.model.ResponseRegisterUser
 import com.example.greendar.databinding.ActivityLoginBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -18,6 +20,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import retrofit2.Call
+import retrofit2.Response
 import java.util.regex.Pattern
 
 class LoginActivity:AppCompatActivity() {
@@ -59,8 +63,9 @@ class LoginActivity:AppCompatActivity() {
                     //정보 있음
                     if(task.isSuccessful){
                         if(checkAuth()){
-                            //TODO user 가 이메일 인증 까지 완료 했을 때 (우리는 메인 페이지 로 넘어감)
-                            Toast.makeText(this, "log in complete", Toast.LENGTH_SHORT).show()
+                            //이메일 인증 까지 완료
+                            //token O -> 메인 페이지, token X -> profile_setting
+                            findUser(auth.currentUser?.uid.toString(), "normal")
                         } else{
                             //이메일 인증을 완료 하지 않음
                             Toast.makeText(this, "이메일 인증을 완료 하지 않음", Toast.LENGTH_SHORT).show()
@@ -86,9 +91,8 @@ class LoginActivity:AppCompatActivity() {
                     .addOnCompleteListener(this){task->
                         if(task.isSuccessful){
                             //구글 로그인 성공
-                            Toast.makeText(this, "log in complete", Toast.LENGTH_SHORT).show()
-                            //TODO: 다음 페이지 넘어 가는 것 구현
-                            //startActivity(Intent(this@LoginActivity, StartActivity::class.java))
+                            //token O -> 메인 페이지, token X -> register_password
+                            findUser(auth.currentUser?.uid.toString(), "com.google")
                         } else{
                             //구글 로그인 실패
                             Toast.makeText(this, "log in failed", Toast.LENGTH_SHORT).show()
@@ -110,7 +114,59 @@ class LoginActivity:AppCompatActivity() {
             val signInIntent = GoogleSignIn.getClient(this, gso).signInIntent
             requestLauncher.launch(signInIntent)
         }
+    }
 
+    //회원 있니? api
+    private fun findUser(userToken:String, provider:String){
+        RetrofitAPI.post.postFindUser(userToken)
+            .enqueue(object:retrofit2.Callback<ResponseRegisterUser>{
+                override fun onResponse(
+                    call: Call<ResponseRegisterUser>,
+                    response: Response<ResponseRegisterUser>
+                ) {
+                    if((response.body()?.header?.status == 200)) {
+                        //토큰 존재 : move to Calendar
+                        Log.d("Yuri", "success")
+                        Toast.makeText(this@LoginActivity, "log in complete", Toast.LENGTH_SHORT)
+                            .show()
+                    }else if((response.body()?.header?.status == 500)){
+                        //토큰 존재 X
+                        if(provider == "com.google"){
+                            //구글
+                            Log.d("Yuri", "googleEmail : ${auth.currentUser?.email.toString()}")
+                            Log.d("Yuri", "googleUid : $userToken")
+                            Log.d("Yuri", "provider : ${auth.currentUser!!.providerData[0].toString().substring(0,10)}")
+
+                            val intent = Intent(this@LoginActivity, RegisterPasswordActivity::class.java)
+                            //우선 이름 같게
+                            intent.putExtra("googleEmail", auth.currentUser?.email.toString())
+                            intent.putExtra("googleUid", userToken)
+                            intent.putExtra("provider", auth.currentUser!!.providerData[0].toString().substring(0,10))
+                            startActivity(intent)
+                        }
+                        else{
+                            //일반
+                            Log.d("Yuri", "email: ${binding.textInputEditTextEmail.text.toString()}")
+                            Log.d("Yuri", "password : ${binding.textInputEditTextPassword.text.toString()}")
+                            Log.d("Yuri", "uid: $userToken")
+
+                            val intent = Intent(this@LoginActivity, ProfileSettingActivity::class.java)
+                            //우선 이름 같게
+                            intent.putExtra("email", binding.textInputEditTextEmail.text.toString())
+                            intent.putExtra("password",binding.textInputEditTextPassword.text.toString())
+                            intent.putExtra("uid", userToken)
+                            startActivity(intent)
+                        }
+                    }
+                    else{
+                        Log.d("Yuri", "sth wrong")
+                    }
+                }
+                override fun onFailure(call: Call<ResponseRegisterUser>, t: Throwable) {
+                    Log.e("Yuri", "서버 연결 실패")
+                    Log.e("Yuri", t.toString())
+                }
+            })
     }
 
     //이메일 제약 조건(이메일 주소가 맞는지)
@@ -187,7 +243,7 @@ class LoginActivity:AppCompatActivity() {
         binding.btnLogin.isEnabled = (emailFlag && passwordFlag)
     }
 
-    //TODO : 코드 읽고 수정 필요
+    //이메일 인증 했는지 확인
     private fun checkAuth():Boolean{
         val currentUser = auth.currentUser
         return currentUser?.let{

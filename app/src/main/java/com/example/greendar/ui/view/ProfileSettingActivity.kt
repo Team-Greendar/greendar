@@ -3,6 +3,8 @@ package com.example.greendar.ui.view
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Window
 import android.widget.Toast
@@ -12,13 +14,20 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.greendar.data.api.RetrofitAPI
+import com.example.greendar.data.model.PostRegisterUser
+import com.example.greendar.data.model.ResponseRegisterUser
 import com.example.greendar.databinding.ActivityProfileSettingBinding
+import retrofit2.Call
+import retrofit2.Response
 
 class ProfileSettingActivity:AppCompatActivity() {
 
     private lateinit var binding: ActivityProfileSettingBinding
     private lateinit var launcher:ActivityResultLauncher<Intent>
 
+    //check flag
+    private var nameFlag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,11 +37,10 @@ class ProfileSettingActivity:AppCompatActivity() {
         binding = ActivityProfileSettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.btnNext.isEnabled = false
+
         init()
-
-        Log.d("Yuri", "username : ${intent.getStringExtra("username").toString()}")
-        binding.textInputEditTextName.setText(intent.getStringExtra("username"))
-
+        binding.textInputEditTextUsername.addTextChangedListener(nameListener)
 
         //여기 입니다....(1)
         binding.btnCamera.setOnClickListener{
@@ -57,8 +65,60 @@ class ProfileSettingActivity:AppCompatActivity() {
                     ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), 1000)
                 }
             }
-
         }
+
+        binding.btnNext.setOnClickListener {
+            val username = binding.textInputEditTextUsername.text.toString()
+            //구글 회원 가입
+            if(intent.getStringExtra("provider") == "com.google"){
+                val googleEmail = intent.getStringExtra("googleEmail").toString()
+                val googlePassword = intent.getStringExtra("googlePassword").toString()
+                val googleUid = intent.getStringExtra("googleUid").toString()
+
+                val postRegister = PostRegisterUser(googleEmail, googleUid, username, googlePassword)
+                postUserInfo(postRegister)
+            }
+            //일반 회원 가입
+            else{
+                val email = intent.getStringExtra("email").toString()
+                val password = intent.getStringExtra("password").toString()
+                val uid = intent.getStringExtra("uid").toString()
+
+                val postRegister = PostRegisterUser(email, uid, username, password)
+                postUserInfo(postRegister)
+            }
+        }
+    }
+
+    //API
+    private fun postUserInfo(postRegister:PostRegisterUser){
+        RetrofitAPI.post.postRegisterUser(postRegister)
+            .enqueue(object:retrofit2.Callback<ResponseRegisterUser>{
+                override fun onResponse(
+                    call: Call<ResponseRegisterUser>,
+                    response: Response<ResponseRegisterUser>
+                ) {
+                    if(response.body()?.header?.status == 200){
+                        if(response.body()?.header?.message == "SUCCESS"){
+                            Log.e("Yuri", "로그인 성공")
+                            Toast.makeText(this@ProfileSettingActivity, "회원가입 성공. 다음으로 넘어감", Toast.LENGTH_SHORT).show()
+                            //TODO 다음 으로 넘어감
+                        }
+                        else{
+                            Log.e("Yuri", "이미 존재하는 닉네임이다")
+                            Toast.makeText(this@ProfileSettingActivity, "이미 존재하는 username입니다. 다시 입력해주세요.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                }
+                override fun onFailure(
+                    call: Call<ResponseRegisterUser>,
+                    t: Throwable
+                ) {
+                    Log.e("Yuri", "연결 실패")
+                    Log.e("Yuri", t.toString())
+                }
+            })
     }
 
     private fun init(){
@@ -124,5 +184,29 @@ class ProfileSettingActivity:AppCompatActivity() {
                 //do nothing
             }
         }
+    }
+
+    private val nameListener = object: TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        override fun afterTextChanged(s: Editable?) {
+            if(s != null){
+                when{
+                    s.isEmpty() ->{
+                        binding.textInputLayoutUsername.error = "please enter your name"
+                        nameFlag = false
+                    }
+                    else ->{
+                        binding.textInputLayoutUsername.error = null
+                        nameFlag = true
+                    }
+                }
+                flagCheck()
+            }
+        }
+    }
+
+    private fun flagCheck(){
+        binding.btnNext.isEnabled = nameFlag
     }
 }

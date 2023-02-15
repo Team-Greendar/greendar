@@ -7,14 +7,15 @@ import android.view.ViewGroup
 import com.example.greendar.databinding.BottomSheetDialogEventTodoBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class BottomSheetEvent():BottomSheetDialogFragment() {
+class DailyTodoBottomSheet():BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         var binding = BottomSheetDialogEventTodoBinding.inflate(inflater, container, false)
-        //여기서 행동 정의
+        //TODO : 여기서 행동 정의
+        //버튼 눌리면 -> bottom
 
         return binding.root
     }

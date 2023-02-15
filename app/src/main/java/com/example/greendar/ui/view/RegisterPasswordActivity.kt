@@ -8,20 +8,16 @@ import android.util.Log
 import android.view.Window
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.greendar.data.api.RetrofitAPI
-import com.example.greendar.data.model.PostRegisterUser
-import com.example.greendar.data.model.ResponseRegisterUser
 import com.example.greendar.databinding.ActivityRegisterPasswordBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import retrofit2.Call
-import retrofit2.Response
 
 /*
 TODO : 일반 회원 가입 - 비밀 번호 받고 인증 메일 보내기, 인증 해야 다음 페이지 로 넘어갈 수 있다.
 TODO : 구글 회원 가입 - 비밀 번호 받고 계정 관리로 넘어갈 수 있다.
- */
+*/
+
 class RegisterPasswordActivity:AppCompatActivity() {
     private lateinit var binding: ActivityRegisterPasswordBinding
     private lateinit var auth: FirebaseAuth
@@ -41,80 +37,123 @@ class RegisterPasswordActivity:AppCompatActivity() {
         binding.textInputEditTextPassword.addTextChangedListener(passwordListener)
         binding.textInputEditTextPasswordConfirm.addTextChangedListener(passwordConfirmListener)
 
-        //TODO 구글 로그인 관련 해서 이야기 필요
-        binding.tvEmail.text = intent.getStringExtra("normalEmail")
-        Log.d("Yuri", "${intent.getStringExtra("normalEmail")}")
-        //email = intent.getStringExtra("googleEmail")
+        //일반 회원 가입
+        if(intent.getStringExtra("googleEmail") == null){
+            binding.tvEmail.text = intent.getStringExtra("normalEmail")
+            Log.d("Yuri", "normal email : ${intent.getStringExtra("normalEmail")}")
+            Log.d("Yuri", "google email : ${intent.getStringExtra("googleEmail")}")
+        }
+        //구글 회원 가입
+        else if(intent.getStringExtra("normalEmail") == null){
+            binding.tvEmail.text = intent.getStringExtra("googleEmail")
+            Log.d("Yuri", "normal email : ${intent.getStringExtra("normalEmail")}")
+            Log.d("Yuri", "google email : ${intent.getStringExtra("googleEmail")}")
+        }
 
         binding.btnBack.setOnClickListener {
             startActivity(Intent(this@RegisterPasswordActivity, RegisterActivity::class.java))
         }
 
-        //TODO : 일반 회원 가입 - 인증 이메일 전송 필요 - 인증 끝나면 로그인 까지 자동 완료 해주고 계정 설정 으로 넘어감
-        //TODO : 구글 회원 가입 완료 - 그냥 넘어감
+        //일반 회원 가입 - 인증 이메일 전송 필요 - 인증 끝나면 로그인 까지 자동 완료 해주고 계정 설정 으로 넘어감
+        //구글 회원 가입 완료 - 그냥 넘어감
         auth = Firebase.auth
         binding.btnRegister.setOnClickListener {
-            //회원 가입 하기
             val email = binding.tvEmail.text.toString()
             val password = binding.textInputEditTextPassword.text.toString()
 
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        //계정 등록 성공
-                        auth.currentUser?.sendEmailVerification()
-                            ?.addOnCompleteListener { sendTask ->
-                                if (sendTask.isSuccessful) {
-                                    //인증 메일 발송 성공
-                                    Toast.makeText(
-                                        this, "인증 메일을 확인 해야 회원가입이 완료 됩니다.\n이메일 확인 해주고, 로그인 해서 Greendar를 사용해주세요", Toast.LENGTH_SHORT).show()
-                                } else {
-                                    //인증 메일 발송 실패
-                                    Toast.makeText(this, "인증 메일 발송 실패. 이메일 주소를 다시 확인해주세요.", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                    }
-                    //계정 등록 실패(이미 계정이 등록 되어 있는 상태) -> 이메일 인증 완료
-                    else if (checkAuth()) {
-                        auth.signInWithEmailAndPassword(email, password)
-                            .addOnCompleteListener(this) { task ->
-                                //계정 일치
-                                if (task.isSuccessful) {
-                                    val username = intent.getStringExtra("username").toString()
-                                    Log.d("Yuri", "이메일 인증 O, 계정 일치 O")
-                                    Log.d("Yuri", "email : ${binding.tvEmail.text}, password : ${binding.textInputEditTextPassword.text.toString()}")
-                                    Log.d("Yuri", "uid: ${auth.currentUser?.uid.toString()}")
-                                    Log.d("Yuri", "username : $username")
+            //구글 회원 가입
+            if (intent.getStringExtra("provider") == "com.google") {
+                val googleUid = intent.getStringExtra("googleUid").toString()
+                val provider = intent.getStringExtra("provider").toString()
 
-                                    //API
-                                    val postRegister = PostRegisterUser(binding.tvEmail.text.toString(), auth.currentUser?.uid.toString(), username, binding.textInputEditTextPassword.text.toString())
-                                    postUserInfo(postRegister)
+                Log.d("Yuri", "googleEmail : $email")
+                Log.d("Yuri", "googlePassword : $password")
+                Log.d("Yuri", "googleUid : $googleUid")
 
-                                    val intent = Intent(this, ProfileSettingActivity::class.java)
-                                    intent.putExtra("username", username)
+                val intent = Intent(this, ProfileSettingActivity::class.java)
+                intent.putExtra("googleEmail", email)
+                intent.putExtra("googlePassword", password)
+                intent.putExtra("googleUid", googleUid)
+                intent.putExtra("provider", provider)
+                startActivity(intent)
+            }
+            //일반 회원 가입
+            else {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            //계정 등록 성공
+                            auth.currentUser?.sendEmailVerification()
+                                ?.addOnCompleteListener { sendTask ->
+                                    if (sendTask.isSuccessful) {
+                                        //인증 메일 발송 성공
+                                        Toast.makeText(
+                                            this,
+                                            "인증 메일을 확인 해야 회원가입이 완료 됩니다.\n이메일 확인 해주고, 로그인 해서 Greendar를 사용해주세요",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        //인증 메일 발송 실패
+                                        Toast.makeText(
+                                            this,
+                                            "인증 메일 발송 실패. 이메일 주소를 다시 확인해주세요.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                        }
+                        //계정 등록 실패(이미 계정이 등록 되어 있는 상태) -> 이메일 인증 완료
+                        else if (checkAuth()) {
+                            auth.signInWithEmailAndPassword(email, password)
+                                .addOnCompleteListener(this) { task ->
+                                    //계정 일치
+                                    if (task.isSuccessful) {
+                                        Log.d("Yuri", "이메일 인증 O, 계정 일치 O")
+                                        Log.d(
+                                            "Yuri",
+                                            "email : ${binding.tvEmail.text}, password : ${binding.textInputEditTextPassword.text.toString()}"
+                                        )
+                                        Log.d(
+                                            "Yuri",
+                                            "uid: ${auth.currentUser?.uid.toString()}"
+                                        )
 
-                                    startActivity(Intent(this@RegisterPasswordActivity, ProfileSettingActivity::class.java))
-                                    startActivity(intent)
+                                        val intent =
+                                            Intent(this, ProfileSettingActivity::class.java)
+                                        intent.putExtra("email", binding.tvEmail.text)
+                                        intent.putExtra(
+                                            "password",
+                                            binding.textInputEditTextPassword.text.toString()
+                                        )
+                                        intent.putExtra("uid", auth.currentUser?.uid.toString())
+
+                                        startActivity(intent)
+                                    }
+                                    //계정 일치 X
+                                    else {
+                                        Log.d("Yuri", "이메일 인증 O, 비밀 번호 일치 X")
+                                        Toast.makeText(
+                                            this,
+                                            "비밀번호를 다시 확인 해주세요",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                    }
                                 }
-                                //계정 일치 X
-                                else{
-                                    Log.d("Yuri", "이메일 인증 O, 계정 일치 X")
-                                    Toast.makeText(this, "비밀번호를 다시 확인 해주세요", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                    }
-                    //계정 등록 실패(이미 계정이 등록 되어 있는 상태) -> 이메일 인증 완료 X
-                    else if(!checkAuth()){
-                        Log.d("Yuri", "이메일 인증 X")
-                        Toast.makeText(this, "이메일 인증을 다시 해주 세요.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        //계정 등록 실패 : 다양한 이유가 있지만 그 중 하나 이미 있는 계정 등
-                        Log.w("Yuri", "createUserWithEmail:failure", task.exception)
-                        Toast.makeText(this, "회원 가입 실패", Toast.LENGTH_SHORT).show()
+                        }
+                        //계정 등록 실패(이미 계정이 등록 되어 있는 상태) -> 이메일 인증 완료 X
+                        else if (!checkAuth()) {
+                            Log.d("Yuri", "이메일 인증 X")
+                            Toast.makeText(this, "이메일 인증을 다시 해주 세요.", Toast.LENGTH_SHORT).show()
+                        } else {
+                            //계정 등록 실패 : 다양한 이유가 있지만 그 중 하나 이미 있는 계정 등
+                            Log.w("Yuri", "createUserWithEmail:failure", task.exception)
+                            Toast.makeText(this, "회원 가입 실패", Toast.LENGTH_SHORT).show()
                         }
                     }
-                }
             }
+        }
+    }
 
     //이메일 인증 했는지 check
     private fun checkAuth(): Boolean {
@@ -126,35 +165,7 @@ class RegisterPasswordActivity:AppCompatActivity() {
         }
     }
 
-    //API
-    private fun postUserInfo(postRegister:PostRegisterUser){
-        RetrofitAPI.post.postRegisterUser(postRegister)
-            .enqueue(object:retrofit2.Callback<ResponseRegisterUser>{
-                override fun onResponse(
-                    call: Call<ResponseRegisterUser>,
-                    response: Response<ResponseRegisterUser>
-                ) {
-                    if(response.body()?.header?.status == 200){
-                        if(response.body()?.header?.message == "SUCCESS"){
-                            Log.e("Yuri", "로그인 성공")
-                            //TODO 다음 으로 넘어감
-                        }
-                        else{
-                            Log.e("Yuri", "이미 존재하는 닉네임이다")
-                            //TODO
-                        }
-                    }
 
-                }
-                override fun onFailure(
-                    call: Call<ResponseRegisterUser>,
-                    t: Throwable
-                ) {
-                    Log.e("Yuri", "연결 실패")
-                    Log.e("Yuri", t.toString())
-                }
-            })
-    }
 
     //password check (changePassword 재활용)
     private val passwordListener = object : TextWatcher {

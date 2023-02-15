@@ -12,4 +12,8 @@ interface APIS {
         @Body postRegisterUser: PostRegisterUser
     ):Call<ResponseRegisterUser>
 
+    @POST("/api/v1/member/validity")
+    fun postFindUser(
+        @Header("Authorization") token:String
+    ):Call<ResponseRegisterUser>
 }

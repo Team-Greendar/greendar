@@ -19,6 +19,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
+
 class RegisterActivity:AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
@@ -42,15 +43,23 @@ class RegisterActivity:AppCompatActivity() {
 
         //일반 회원 가입 하기 - 이메일 정보 가지고 다음 페이지 로 넘어감
         binding.btnRegister.setOnClickListener {
-            val username = intent.getStringExtra("username").toString()
-            Log.d("Yuri", "Normal Register : Send E-mail : ${binding.textInputEditTextEmail.text.toString()}")
-            Log.d("Yuri", "Username : $username")
-
-            val intent = Intent(this, RegisterPasswordActivity::class.java)
-            intent.putExtra("normalEmail", binding.textInputEditTextEmail.text.toString())
-            intent.putExtra("username", username)
-            startActivity(Intent(this@RegisterActivity, RegisterPasswordActivity::class.java))
-            startActivity(intent)
+            //이미 존재 하는 이메일 check
+            auth.fetchSignInMethodsForEmail(binding.textInputEditTextEmail.text.toString())
+                .addOnCompleteListener(this) { task ->
+                    val isNewUser = task.result.signInMethods?.isEmpty()
+                    if (isNewUser!!) {
+                        //새로운 유저
+                        Log.d("Yuri", "Is New User!")
+                        Log.d("Yuri", "Normal e-mail : ${binding.textInputEditTextEmail.text.toString()}")
+                        val intent = Intent(this, RegisterPasswordActivity::class.java)
+                        intent.putExtra("normalEmail", binding.textInputEditTextEmail.text.toString())
+                        startActivity(intent)
+                    } else {
+                        //있는 유저
+                        Log.d("Yuri", "이미 존재 하는 이메일")
+                        Toast.makeText(this, "이미 존재 하는 이메일 입니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
         }
 
         auth=Firebase.auth
@@ -66,18 +75,20 @@ class RegisterActivity:AppCompatActivity() {
                 auth.signInWithCredential(credential)
                     .addOnCompleteListener(this){task->
                         if(task.isSuccessful){
-                            //구글 로그인 성공
+                            //구글 회원 가입 성공
                             Toast.makeText(this, "register complete", Toast.LENGTH_SHORT).show()
                             //TODO: 이메일 정보 가지고 다음 으로 넘어 가기
-                            Log.d("Yuri", "Google Register : Send E-mail and Provider")
+                            Log.d("Yuri", "googleEmail : ${auth.currentUser?.email}")
+                            Log.d("Yuri", "provider : ${auth.currentUser!!.providerData[0]}")
+                            Log.d("Yuri", "googleUid : ${auth.currentUser?.uid}")
+
                             val intent = Intent(this, RegisterPasswordActivity::class.java)
                             intent.putExtra("googleEmail", auth.currentUser?.email.toString())
-                            Log.d("Yuri", "Google e-mail : ${auth.currentUser?.email}")
-                            Log.d("Yuri", "Provider : ${auth.currentUser!!.providerData[0]}")
-                            Log.d("Yuri", "User Uid : ${auth.currentUser?.uid}")
-                            startActivity(Intent(this@RegisterActivity, RegisterPasswordActivity::class.java))
+                            intent.putExtra("googleUid", auth.currentUser?.uid.toString())
+                            intent.putExtra("provider", auth.currentUser!!.providerData[0].toString().substring(0,10))
+                            startActivity(intent)
                         } else{
-                            //구글 로그인 실패
+                            //구글 회원 가입 실패
                             Toast.makeText(this, "register failed", Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -88,15 +99,42 @@ class RegisterActivity:AppCompatActivity() {
 
         binding.btnRegisterGoogle.setOnClickListener {
             //구글 회원 가입  하기 - firebase 로 인증 진행
-            val gso = GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .requestProfile()
-                .build()
-            val signInIntent = GoogleSignIn.getClient(this, gso).signInIntent
-            requestLauncher.launch(signInIntent)
+            //이미 존재 하는 이메일 check
+            auth.fetchSignInMethodsForEmail(auth.currentUser?.email.toString())
+                .addOnCompleteListener(this) { task ->
+                    val isNewUser = task.result.signInMethods?.isEmpty()
+                    if (isNewUser!!) {
+                        Log.d("Yuri", "Is New User!")
+                        //새로운 이메일
+                        val gso = GoogleSignInOptions
+                            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(getString(R.string.default_web_client_id))
+                            .requestEmail()
+                            .requestProfile()
+                            .build()
+                        val signInIntent = GoogleSignIn.getClient(this, gso).signInIntent
+                        requestLauncher.launch(signInIntent)
+                    } else {
+                        Log.d("Yuri", "Is Old User!")
+                        Toast.makeText(this, "이미 존재 하는 이메일 입니다. 로그인 진행해 주세요", Toast.LENGTH_SHORT).show()
+                    }
+                }
         }
+    }
+
+    //이메일 존재 하는지 안 하는지 check
+    private fun existEmail(email: String){
+        auth.fetchSignInMethodsForEmail(email)
+            .addOnCompleteListener(this) { task ->
+                val isNewUser = task.result.signInMethods?.isEmpty()
+                if (isNewUser!!) {
+                    Log.d("Yuri", "Is New User!")
+
+                } else {
+                    Log.d("Yuri", "Is Old User!")
+
+                }
+            }
     }
 
     //e-mail check (login 재사용)
@@ -123,7 +161,6 @@ class RegisterActivity:AppCompatActivity() {
             }
         }
     }
-
 
     private fun flagCheck(){
         binding.btnRegister.isEnabled = emailFlag
