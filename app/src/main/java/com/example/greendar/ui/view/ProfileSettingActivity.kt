@@ -2,7 +2,10 @@ package com.example.greendar.ui.view
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -14,12 +17,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.loader.content.CursorLoader
+import com.bumptech.glide.Glide
 import com.example.greendar.data.api.RetrofitAPI
 import com.example.greendar.data.model.PostRegisterUser
 import com.example.greendar.data.model.ResponseRegisterUser
 import com.example.greendar.databinding.ActivityProfileSettingBinding
 import retrofit2.Call
 import retrofit2.Response
+
 
 class ProfileSettingActivity:AppCompatActivity() {
 
@@ -28,6 +34,7 @@ class ProfileSettingActivity:AppCompatActivity() {
 
     //check flag
     private var nameFlag = false
+    private var imageFile = "EMPTY"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,13 +76,16 @@ class ProfileSettingActivity:AppCompatActivity() {
 
         binding.btnNext.setOnClickListener {
             val username = binding.textInputEditTextUsername.text.toString()
+            val message = binding.textInputEditTextStatusMessage.text.toString()
+
             //구글 회원 가입
             if(intent.getStringExtra("provider") == "com.google"){
                 val googleEmail = intent.getStringExtra("googleEmail").toString()
                 val googlePassword = intent.getStringExtra("googlePassword").toString()
                 val googleUid = intent.getStringExtra("googleUid").toString()
 
-                val postRegister = PostRegisterUser(googleEmail, googleUid, username, googlePassword)
+                val postRegister = PostRegisterUser(googleEmail, googleUid, username, googlePassword, imageFile, message)
+                Log.d("Yuri", "imageUrl : $imageFile, message: $message")
                 postUserInfo(postRegister)
             }
             //일반 회원 가입
@@ -84,7 +94,8 @@ class ProfileSettingActivity:AppCompatActivity() {
                 val password = intent.getStringExtra("password").toString()
                 val uid = intent.getStringExtra("uid").toString()
 
-                val postRegister = PostRegisterUser(email, uid, username, password)
+                val postRegister = PostRegisterUser(email, uid, username, password, imageFile, message)
+                Log.d("Yuri", "imageUrl : $imageFile, message: $message")
                 postUserInfo(postRegister)
             }
         }
@@ -126,17 +137,28 @@ class ProfileSettingActivity:AppCompatActivity() {
             if(result.resultCode == RESULT_OK){
                 val intent = checkNotNull(result.data)
                 val imageUri = intent.data
-                //이미지 연결
-                binding.btnProfile.setImageURI(imageUri)
+                imageUri?.let{
+                    //서버 업로드 위해 이미지 절대 경로 변환
+                    imageFile = getRealPathFromURI(it)
 
-                /*
-                //Glide 로 하는 방법
-                Glide.with(this)
-                    .load(imageUri)
-                    .into(binding.btnProfile)
-                */
+                    Glide.with(this)
+                        .load(imageUri)
+                        .into(binding.btnProfile)
+                }
             }
         }
+    }
+
+    private fun getRealPathFromURI(uri: Uri):String{
+        val proj = arrayOf(MediaStore.Images.Media.DATA)
+        val cursorLoader = CursorLoader(this, uri, proj, null, null, null)
+        val cursor: Cursor? = cursorLoader.loadInBackground()
+
+        val columnIndex: Int = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        cursor.moveToFirst()
+        val url: String = cursor.getString(columnIndex)
+        cursor.close()
+        return url
     }
 
     //갤러리 에서 사진 가져 오기

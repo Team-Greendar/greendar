@@ -4,7 +4,9 @@ data class PostRegisterUser(
     val email: String,
     val firebaseToken: String,
     val name: String,
-    val password: String
+    val password: String,
+    val imageUrl: String,
+    val message:String
 )
 
 data class ResponseRegisterUser(

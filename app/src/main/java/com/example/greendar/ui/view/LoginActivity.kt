@@ -253,17 +253,4 @@ class LoginActivity:AppCompatActivity() {
             false
         }
     }
-
-    /*서버 check
-    val postUser = PostModel(1, "sore")
-    private fun postUserInfo(postUser: PostModel){
-        RetrofitAPI.post.postUsers(postUser)
-            .enqueue(object:retrofit2.Callback<PostResult>{
-                override fun onResponse(call: Call<PostResult>, response: Response<PostResult>) {
-
-                }
-            })
-    }
-    */
-
 }
