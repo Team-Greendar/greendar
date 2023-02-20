@@ -17,10 +17,12 @@ class TodoActivity:AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(true)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
+        /*
+        버튼 누르면 bottom sheet ...
+        val bottomSheet = BottomSheet()  -> Bottom Sheet() : 프레그 먼트 이름
+        bottomSheet.show(supportFragmentManager, bottomSheet.tag)
 
-        binding.imageButton1.setOnClickListener {
-
-        }
+         */
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

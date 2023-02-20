@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.view.RegisterActivity"
+    tools:context=".ui.view.UsernameActivity"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +29,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -42,30 +42,48 @@
             app:layout_constraintTop_toBottomOf="@+id/btn_back" />
 
 
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Username"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView1"
+            />
+
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input_layout_email"
+            android:id="@+id/text_input_layout_username"
             style="@style/MyTextInputLayout"
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3"
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
+
+            app:counterEnabled="true"
+            app:counterMaxLength="10"
+            app:hintAnimationEnabled="false"
+            app:hintEnabled="false"
             >
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/text_input_editText_email"
+                android:id="@+id/text_input_editText_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:paddingTop="25dp"
-                android:paddingBottom="5dp"
-                android:hint="e-mail"
-                android:inputType="textEmailAddress"
+                android:maxLength="10"
+                android:paddingTop="15dp"
+                android:hint="Enter your name"
+                android:inputType="text"
                 />
         </com.google.android.material.textfield.TextInputLayout>
-
 
 
         <android.widget.Button
@@ -79,56 +97,10 @@
             android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_input_layout_email"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_layout_username"
             android:layout_marginTop="40dp"
             android:enabled="false"
             />
-
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
-            android:gravity="center_horizontal|center_vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_register">
-
-            <View
-                android:layout_width="150dp"
-                android:layout_height="1dp"
-                android:background="@color/gray" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:text="or"
-                android:textColor="@color/gray"
-                android:textSize="15sp" />
-
-            <View
-                android:layout_width="150dp"
-                android:layout_height="1dp"
-                android:background="@color/gray" />
-        </LinearLayout>
-
-        <android.widget.Button
-            android:id="@+id/btn_register_google"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/button_white_background"
-            android:drawableStart="@drawable/drawable_icon_google"
-            android:paddingHorizontal="60dp"
-            android:text="Register with Google"
-            android:textAllCaps="false"
-            android:textColor="@color/main_color"
-            android:textSize="17sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

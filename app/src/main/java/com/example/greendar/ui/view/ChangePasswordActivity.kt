@@ -46,7 +46,7 @@ class ChangePasswordActivity:AppCompatActivity() {
                         passwordFlag=false
                     }
                     !LoginActivity().passwordRegex(s.toString())->{
-                        binding.textInputLayoutPassword.error = "English uppercase/lowercase letters, numbers (max 8 letters)"
+                        binding.textInputLayoutPassword.error = "English uppercase/lowercase letters, numbers (min 6, max 8 letters)"
                         passwordFlag = false
                         when{
                             binding.textInputEditTextPasswordConfirm.text.toString() != binding.textInputEditTextPassword.text.toString() ->{
