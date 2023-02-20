@@ -13,7 +13,7 @@ object RetrofitAPI {
             .build()
     }
 
-    val post: APIS by lazy{
-        retrofit.create(APIS::class.java)
+    val post: RegisterAPI by lazy{
+        retrofit.create(RegisterAPI::class.java)
     }
 }

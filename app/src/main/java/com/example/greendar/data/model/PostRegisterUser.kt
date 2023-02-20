@@ -13,16 +13,13 @@ data class ResponseRegisterUser(
     val header: Header,
 )
 
-data class Body(
-    val email: String,
-    val id: Int,
-    val imageUrl: String,
-    val message: String,
-    val name: String,
-    val password: String
+data class ResponseProfileImage(
+    val body: String,
+    val header: Header
 )
 
 data class Header(
     val message: String,
     val status: Int
 )
+
