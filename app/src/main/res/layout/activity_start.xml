@@ -8,10 +8,9 @@
     >
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="15dp"
-            >
+            android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/imageView"
@@ -73,14 +72,14 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_white_background"
                     android:text="Log in"
-                    android:textColor="@color/main_color"
                     android:textAllCaps="false"
+                    android:textColor="@color/main_color"
                     android:textSize="17sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

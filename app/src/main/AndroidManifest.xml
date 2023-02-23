@@ -19,19 +19,20 @@
         android:requestLegacyExternalStorage="true"
         >
 
-        <activity android:name=".ui.view.UsernameActivity"/>
+        <activity android:name=".ui.view.TodoActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".ui.view.RegisterActivity"/>
         <activity android:name=".ui.view.RegisterPasswordActivity"/>
         <activity android:name=".ui.view.LoginActivity"/>
         <activity android:name=".ui.view.ChangePasswordActivity"/>
         <activity android:name=".ui.view.ProfileSettingActivity"/>
 
+
         <activity
             android:name=".ui.view.StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 

@@ -27,10 +27,16 @@
 
         <item name="android:textCursorDrawable">@color/black</item>
         <item name="hintTextColor">@color/gray</item>
-
         <item name="android:textColorHint">@color/gray</item>
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="background">@android:color/transparent</item>
+    </style>
 
 </resources>

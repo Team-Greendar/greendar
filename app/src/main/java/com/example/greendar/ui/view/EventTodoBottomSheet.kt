@@ -4,20 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.greendar.databinding.BottomSheetDialogDailyTodoBinding
+import com.example.greendar.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class DailyTodoBottomSheet():BottomSheetDialogFragment() {
+class EventTodoBottomSheet():BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var binding = BottomSheetDialogDailyTodoBinding.inflate(inflater, container, false)
 
-        return binding.root
+        return inflater.inflate(R.layout.bottom_sheet_dialog_event_todo, container, false)
     }
-
 
 
 
