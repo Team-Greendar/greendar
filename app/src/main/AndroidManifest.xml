@@ -19,7 +19,8 @@
         android:requestLegacyExternalStorage="true"
         >
 
-        <activity android:name=".ui.view.TodoActivity"/>
+        <activity android:name=".ui.view.TodoActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".ui.view.RegisterActivity"/>
         <activity android:name=".ui.view.RegisterPasswordActivity"/>
         <activity android:name=".ui.view.LoginActivity"/>

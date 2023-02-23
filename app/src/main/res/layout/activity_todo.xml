@@ -108,9 +108,9 @@
         <TextView
             android:id="@+id/eventTodo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
+            android:gravity="center"
             android:background="@drawable/square_gray_title"
-            android:paddingVertical="10dp"
             android:paddingHorizontal="10dp"
             android:text="Event Todo"
             android:textStyle="bold"
@@ -118,10 +118,11 @@
             android:textColor="@color/yellow"
             />
 
-        <TextView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_eventTodo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="여기에 넣어라!"/>
+            android:layout_height="100dp"
+            tools:listitem="@layout/item_todo_list"/>
 
     </LinearLayout>
 
@@ -139,7 +140,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/dailyTodo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:background="@drawable/square_gray_title"
             android:paddingHorizontal="10dp"
             android:text="Daily Todo "
@@ -148,21 +149,15 @@
             android:textColor="@color/blue"
             android:textAllCaps="false"
             android:drawableEnd="@drawable/ic_add_circle"
+            android:stateListAnimator="@null"
             />
 
-        <TextView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_dailyTodo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="여기에 넣어라!"/>
+            tools:listitem="@layout/item_todo_list"/>
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btn_bottom_sheet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:text="bottom sheet"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -36,6 +36,9 @@ android {
     viewBinding{
         enabled = true
     }
+    dataBinding{
+        enabled true
+    }
 }
 
 dependencies {
@@ -68,6 +71,9 @@ dependencies {
     //glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    //recyclerView
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
