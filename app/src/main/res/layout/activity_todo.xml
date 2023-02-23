@@ -2,7 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.view.TodoActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -21,7 +23,7 @@
             android:layout_gravity="center"
             android:text="Check List"
             android:textColor="@color/gray"
-            android:textSize="27sp"
+            android:textSize="25sp"
             android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
@@ -49,7 +51,7 @@
                 android:scaleY="1.05"
                 android:text="16"
                 android:textColor="@color/black"
-                android:textSize="80sp"
+                android:textSize="70sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -62,7 +64,7 @@
                 android:layout_marginTop="15dp"
                 android:text="July"
                 android:textColor="@color/white"
-                android:textSize="33sp"
+                android:textSize="30sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/day"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -85,7 +87,7 @@
             android:layout_marginEnd="10dp"
             android:text="Sunday"
             android:textColor="@color/white"
-            android:textSize="23sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -106,70 +108,21 @@
         <TextView
             android:id="@+id/eventTodo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
+            android:gravity="center"
             android:background="@drawable/square_gray_title"
-            android:paddingVertical="8dp"
             android:paddingHorizontal="10dp"
             android:text="Event Todo"
-            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textSize="18sp"
             android:textColor="@color/yellow"
             />
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_eventTodo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="5dp"
-            android:orientation="horizontal"
-            >
-
-            <ImageButton
-                android:id="@+id/btn_check1"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/btn_todo_enabled"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="10dp"
-                />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/editText1"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginHorizontal="10dp"
-                    android:inputType="text"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="parent" />
-
-                <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/imageview_round"
-                    app:layout_constraintEnd_toStartOf="@+id/imageButton1"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
-
-                <ImageButton
-                    android:id="@+id/imageButton1"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/ic_three_dots"
-
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </LinearLayout>
+            android:layout_height="100dp"
+            tools:listitem="@layout/item_todo_list"/>
 
     </LinearLayout>
 
@@ -177,7 +130,7 @@
         android:id="@+id/linearLayout_dailyTodo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="15dp"
         android:paddingStart="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -187,69 +140,23 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/dailyTodo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:background="@drawable/square_gray_title"
-            android:paddingVertical="8dp"
             android:paddingHorizontal="10dp"
             android:text="Daily Todo "
-            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textSize="17sp"
             android:textColor="@color/blue"
             android:textAllCaps="false"
             android:drawableEnd="@drawable/ic_add_circle"
+            android:stateListAnimator="@null"
             />
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_dailyTodo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="5dp"
-            android:orientation="horizontal"
-            >
-
-            <ImageButton
-                android:id="@+id/btn_check2"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/btn_todo_enabled"
-                />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/editText2"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginHorizontal="10dp"
-                    android:inputType="text"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="parent" />
-
-                <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/imageview_round"
-                    app:layout_constraintEnd_toStartOf="@+id/imageButton2"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
-
-                <ImageButton
-                    android:id="@+id/imageButton2"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/ic_three_dots"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </LinearLayout>
+            tools:listitem="@layout/item_todo_list"/>
 
     </LinearLayout>
 

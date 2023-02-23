@@ -13,7 +13,7 @@ class StartActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
 
         //바인딩
         binding = ActivityStartBinding.inflate(layoutInflater)
@@ -21,14 +21,13 @@ class StartActivity : AppCompatActivity(){
 
         //Register Activity 연결
         binding.btnRegister.setOnClickListener {
-            startActivity(Intent(this@StartActivity, RegisterActivity::class.java))
+            //startActivity(Intent(this@StartActivity, RegisterActivity::class.java))
+            startActivity(Intent(this@StartActivity, TodoActivity::class.java))
         }
 
         //Login Activity 연결
         binding.btnLogin.setOnClickListener {
             startActivity(Intent(this@StartActivity, LoginActivity::class.java))
-            //startActivity(Intent(this@StartActivity, ProfileSettingActivity::class.java))
-            
         }
     }
 
