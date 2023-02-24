@@ -16,4 +16,8 @@ object RetrofitAPI {
     val post: RegisterAPI by lazy{
         retrofit.create(RegisterAPI::class.java)
     }
+
+    val getDaily:DailyTodoAPI by lazy{
+        retrofit.create(DailyTodoAPI::class.java)
+    }
 }

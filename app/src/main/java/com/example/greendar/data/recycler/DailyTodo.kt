@@ -1,7 +1,11 @@
 package com.example.greendar.data.recycler
 
 data class DailyTodo(
-    var todo:String,
-    var checkFlag:Boolean,
-    var modifyTodoFlag:Boolean
+    var complete:Boolean,
+    var date:String,
+    var imageUrl:String,
+    var memberName:String,
+    var private_todo_id:Int,
+    var task:String,
+    var modifyClicked:Boolean
 )

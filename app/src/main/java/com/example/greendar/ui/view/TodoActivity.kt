@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -16,22 +17,31 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.loader.content.CursorLoader
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.greendar.R
+import com.example.greendar.data.api.RetrofitAPI
+import com.example.greendar.data.model.GetDailyTodo
 import com.example.greendar.data.recycler.DailyAdapter
 import com.example.greendar.data.recycler.DailyTodo
 import com.example.greendar.databinding.ActivityTodoBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import retrofit2.Call
+import retrofit2.Response
 
 class TodoActivity: AppCompatActivity() {
     private lateinit var binding:ActivityTodoBinding
 
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private var filePath = ""
+    private var publicPosition = 0
 
     //recyclerView 가 불러올 목록
-    private var dailyadapter: DailyAdapter? = null
-    private var dailydata:MutableList<DailyTodo> = mutableListOf()
+    private var dailyAdapter: DailyAdapter? = null
+    private var dailyData:MutableList<DailyTodo> = mutableListOf()
+
+
+    //임의로 작성한 변수
+    val token = "1"
+    val date = "2021-12-23"
 
     init{
         instance = this
@@ -53,27 +63,67 @@ class TodoActivity: AppCompatActivity() {
         //supportActionBar?.setDisplayShowTitleEnabled(true)
         //supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        initialize()  //data 값 초기화
-        dailyadapter = DailyAdapter()
-        dailyadapter!!.listData = dailydata
-        binding.recyclerViewDailyTodo.adapter = dailyadapter
+        //TODO : GET api info 연결 함수 작성
+        //getDailyTodoInfo(token, date)
+
+        dailyAdapter = DailyAdapter()
+        dailyAdapter!!.listData = dailyData
+        binding.recyclerViewDailyTodo.adapter = dailyAdapter
         binding.recyclerViewDailyTodo.layoutManager = LinearLayoutManager(this)
 
-        init()
+        init()  //사진 관련
 
         //to-do 4 : to-do 추가
         binding.dailyTodo.setOnClickListener {
-            dailydata.add(DailyTodo("", false, true))
-            dailyadapter?.notifyItemInserted(dailydata.size -1)
+            dailyData.add(DailyTodo(false, date, "EMPTY", "username", 0, "", true))
+            dailyAdapter?.notifyItemInserted(dailyData.size -1)
         }
     }
 
     //TODO : api 에서 값 받아 와서 초기 설정
-    private fun initialize(){
-        with(dailydata){
-            add(DailyTodo("use tumbler", true, false))
-            add(DailyTodo("recycle plastic bottle", false, false))
-            add(DailyTodo("work out", true, false))
+    private fun getDailyTodoInfo(token:String, date:String){
+        RetrofitAPI.getDaily.getDailyTodo(token, date)
+            .enqueue(object:retrofit2.Callback<GetDailyTodo>{
+                override fun onResponse(
+                    call: Call<GetDailyTodo>,
+                    response: Response<GetDailyTodo>
+                ) {
+                    if(response.body()?.header?.code == 200){
+                        Log.e("Yuri", "값 전달 됨")
+                        addDailyTodo(response.body())
+                    } else{
+                        Log.e("Yuri", "sth wrong..! OMG")
+                        Log.e("Yuri", "${response.code()}")
+                    }
+                }
+                override fun onFailure(call: Call<GetDailyTodo>, t: Throwable) {
+                    Log.e("Yuri", "서버 연결 실패")
+                    Log.d("Yuri", t.toString())
+                }
+            })
+    }
+
+    //리스트 에 받아온 정보 연결
+    private fun addDailyTodo(searchResult:GetDailyTodo?){
+        if(!searchResult?.body.isNullOrEmpty()){
+            //daily to-do 존재함
+            dailyData.clear()
+            for(document in searchResult!!.body){
+                //결과를 recycler View 에 추가
+                val todo = DailyTodo(
+                    document.complete,
+                    document.date,
+                    document.imageUrl,
+                    document.memberName,
+                    document.private_todo_id,
+                    document.task,
+                    false
+                )
+                dailyData.add(todo)
+            }
+        }else{
+            //to-do 없음
+            Log.e("Yuri", "결과 없음")
         }
     }
 
@@ -96,60 +146,55 @@ class TodoActivity: AppCompatActivity() {
         val modify = bottomSheetDialog.findViewById<Button>(R.id.btn_modify_todo)
         modify?.setOnClickListener {
             bottomSheetDialog.dismiss()
-            dailydata[position].modifyTodoFlag = true
-            dailyadapter?.notifyDataSetChanged()
-
+            dailyData[position].modifyClicked = true
+            dailyAdapter?.notifyDataSetChanged()
         }
 
         //투두 삭제
         val delete = bottomSheetDialog.findViewById<Button>(R.id.btn_delete_todo)
         delete?.setOnClickListener {
             bottomSheetDialog.dismiss()
-
             deleteTodo(member)
         }
 
-        //TODO 3 : 이미지 추가, 삭제
-        //TODO : 이미지 선택 후, 이미지 uri를 dailydata리스트에 저장, dailyadapter?.notifyDataSetChanged() 추가.
-        //TODO : 이미지 boolean = false -> 버튼 = add photo,  이미지 boolean = true -> 버튼 = delete photo
-        val image = bottomSheetDialog.findViewById<Button>(R.id.btn_verify_photo)
+        //이미지 추가, 삭제
+        //TODO : 서버에 요청 -> 이미지 없을 때 값 통일
+        val image = bottomSheetDialog.findViewById<Button>(R.id.btn_delete_photo)
+        if(dailyData[position].imageUrl == "EMPTY"){
+            image?.text = "upload photo"
+        }else{
+            image?.text = "delete photo"
+        }
         image?.setOnClickListener {
-            when {
-                //1. 처음 부터 허용 권한 있었음
-                ContextCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    Toast.makeText(this, "move to Album", Toast.LENGTH_SHORT).show()
-                    navigatePhoto()
-                }
-                //2.
-                //권한을 명시적 으로 거부한 경우 true
-                //처음 보거나, 다시 묻지 않음을 선택한 경우 false
-                //교육용 팝업 확인 후 권한 팝업을 띄우는 기능
-                ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE
-                ) -> {
-                    showPermissionContextPopup()
-                }
-                //3. 처음 으로 앱을 실행 하고 앨범 접근할 때 실행 되는 코드
-                else -> {
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        1000
-                    )
-                }
+            bottomSheetDialog.dismiss()
+            publicPosition = position
+            if(dailyData[position].imageUrl == "EMPTY") {
+                checkPermission()
+            }else{
+                //사진 삭제
+                dailyData[position].imageUrl = "EMPTY"
+                //TODO : 여기서 서버 연결
+                dailyAdapter?.notifyDataSetChanged()
             }
         }
-
         bottomSheetDialog.show()
     }
 
     fun deleteTodo(member:DailyTodo){
-        dailydata.remove(member)
-        dailyadapter?.notifyDataSetChanged()
+        dailyData.remove(member)
+        dailyAdapter?.notifyDataSetChanged()
+    }
+
+    private fun init(){
+        launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+            if(result.resultCode == RESULT_OK){
+                val intent = checkNotNull(result.data)
+                val imageUri = intent.data
+                filePath = getRealPathFromURI(imageUri!!)  //서버에 보내는 uri
+
+                uploadPhoto(publicPosition, imageUri.toString())  //todo : parameter 에 filePath 추가 해서 서버 연결 할 때 사용
+            }
+        }
     }
 
     //이미지 절대 경로 찾기
@@ -165,22 +210,15 @@ class TodoActivity: AppCompatActivity() {
         return url
     }
 
-    private fun init(){
-        launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
-            if(result.resultCode == RESULT_OK){
-                val intent = checkNotNull(result.data)
-                val imageUri = intent.data
 
-                imageUri.let{
-                    Glide.with(this)
-                        .load(imageUri)
+    //TODO : 사진 올리는 함수 (서버 연결)
+    fun uploadPhoto(position:Int, imageUrl:String){
+        dailyData[position].imageUrl = imageUrl
+        //TODO 여기서 서버 연결 : position 활용 해서 정보 찾아서 연결
 
-                }
-                filePath = getRealPathFromURI(imageUri!!)
-            }
-        }
+        dailyAdapter?.notifyDataSetChanged()
+        Log.e("Yuri", imageUrl)
     }
-
 
     //갤러리 에서 사진 가져 오기
     private fun navigatePhoto(){
@@ -189,8 +227,36 @@ class TodoActivity: AppCompatActivity() {
         launcher.launch(intent)
     }
 
+    //UserPermission 1
+    private fun checkPermission(){
+        when {
+            //1. 처음 부터 허용 권한 있었음
+            ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                navigatePhoto()
+            }
+            //2. 교육용 팝업 확인 후 권한 팝업을 띄우는 기능
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            ) -> {
+                showPermissionContextPopup()
+            }
+            //3. 처음 으로 앱을 실행 하고 앨범 접근할 때 실행 되는 코드
+            else -> {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                    1000
+                )
+            }
+        }
+    }
 
-    //여기 입니다....(2)
+
+    //User Permission 2
     private fun showPermissionContextPopup() {
         AlertDialog.Builder(this)
             .setTitle("Need Permission")
@@ -203,7 +269,7 @@ class TodoActivity: AppCompatActivity() {
             .show()
     }
 
-    //여기 입니다....(3)
+    //User Permission 3
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
