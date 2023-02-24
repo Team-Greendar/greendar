@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
 import com.example.greendar.R
 import com.example.greendar.databinding.ItemTodoListBinding
 import com.example.greendar.ui.view.TodoActivity
@@ -47,12 +48,12 @@ class DailyAdapter:RecyclerView.Adapter<DailyAdapter.Holder>() {
         init{
             binding.btnCheck.setOnClickListener {
                 //Check 표시 변경 가능 할 수 있는 기능
-                if(!(mMember!!.checkFlag)){
+                if(!(mMember!!.modifyClicked)){
                     binding.btnCheck.setImageResource(R.drawable.iv_daily_todo_checked)
-                    mMember!!.checkFlag = true
+                    mMember!!.modifyClicked = true
                 }else{
                     binding.btnCheck.setImageResource(R.drawable.btn_todo_disabled)
-                    mMember!!.checkFlag = false
+                    mMember!!.modifyClicked = false
                 }
             }
 
@@ -67,10 +68,10 @@ class DailyAdapter:RecyclerView.Adapter<DailyAdapter.Holder>() {
             this.mPosition = position
 
             //text 설정
-            binding.etTodo.setText(member.todo)
+            binding.etTodo.setText(member.task)
 
             //checkFlag = true, false
-            if(mMember!!.checkFlag){
+            if(mMember!!.complete){
                 binding.btnCheck.setImageResource(R.drawable.iv_daily_todo_checked)
             }
             else{
@@ -78,21 +79,20 @@ class DailyAdapter:RecyclerView.Adapter<DailyAdapter.Holder>() {
             }
 
             //to-do 수정 = true, false
-            if(mMember!!.modifyTodoFlag){
+            if(mMember!!.modifyClicked){
                 binding.etTodo.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#6B9AC4"))
                 binding.etTodo.isEnabled = true
-                binding.etTodo.setSelection(member.todo.length)
+                binding.etTodo.setSelection(member.task.length)
                 binding.etTodo.requestFocus()
-
 
                 binding.etTodo.setOnEditorActionListener { _, actionId, event ->
                     Log.d("Yuri", "키보드 접근")
                     Log.d("Yuri", "pressed key : $actionId")
                     if((actionId == EditorInfo.IME_ACTION_DONE)||(event.keyCode == KeyEvent.KEYCODE_ENTER)){
-                        member.modifyTodoFlag = false
+                        member.modifyClicked= false
                         binding.etTodo.isEnabled = false
                         binding.etTodo.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#00000000"))
-                        member.todo = binding.etTodo.text.toString()
+                        member.task = binding.etTodo.text.toString()
                         if(binding.etTodo.text.toString().isEmpty()) {
                             //삭제
                             todoActivity?.deleteTodo(member)
@@ -103,9 +103,20 @@ class DailyAdapter:RecyclerView.Adapter<DailyAdapter.Holder>() {
                     }
                 }
             }
+
+            //TODO : to-do 이미지 추가, 삭제
+            if(mMember!!.imageUrl == "EMPTY"){
+                Glide.with(binding.ivPhoto)
+                    .load(R.drawable.iv_invisible_box)
+                    .into(binding.ivPhoto)
+            }else{
+                Glide.with(binding.ivPhoto)
+                    .load(mMember!!.imageUrl)
+                    .into(binding.ivPhoto)
+            }
         }
 
-        //TODO : to-do 이미지 추가, 삭제
+
 
     }
 }
