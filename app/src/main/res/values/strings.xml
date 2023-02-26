@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Greendar</string>
+    <string name="calendar_click_website">If you need more information, click</string>
+    <string name="calendar_click_website1">button.</string>
+    <string name="calendar_change_image_1">Geographic/Habitat/Ecology</string>
+    <string name="calendar_change_image_2">Hungary(Forest, Shrub land)</string>
+
 </resources>
