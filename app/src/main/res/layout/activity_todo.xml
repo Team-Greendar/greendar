@@ -155,7 +155,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_dailyTodo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="270dp"
             tools:listitem="@layout/item_todo_list"/>
 
     </LinearLayout>
