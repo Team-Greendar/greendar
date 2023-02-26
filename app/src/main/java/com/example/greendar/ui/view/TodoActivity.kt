@@ -22,9 +22,6 @@ import com.example.greendar.data.api.RetrofitAPI
 import com.example.greendar.data.model.GetDailyTodo
 import com.example.greendar.data.recycler.DailyAdapter
 import com.example.greendar.data.recycler.DailyTodo
-import com.example.greendar.data.recycler.UserInfo.date
-import com.example.greendar.data.recycler.UserInfo.token
-import com.example.greendar.data.recycler.UserInfo.username
 import com.example.greendar.databinding.ActivityTodoBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import retrofit2.Call
@@ -40,6 +37,11 @@ class TodoActivity: AppCompatActivity() {
     //recyclerView 가 불러올 목록
     private var dailyAdapter: DailyAdapter? = null
     private var dailyData:MutableList<DailyTodo> = mutableListOf()
+
+
+    //임의로 작성한 변수
+    val token = "1"
+    val date = "2021-12-23"
 
     init{
         instance = this
@@ -62,7 +64,7 @@ class TodoActivity: AppCompatActivity() {
         //supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         //TODO : GET api info 연결 함수 작성
-        getDailyTodoInfo(token, date)
+        //getDailyTodoInfo(token, date)
 
         dailyAdapter = DailyAdapter()
         dailyAdapter!!.listData = dailyData
@@ -73,12 +75,12 @@ class TodoActivity: AppCompatActivity() {
 
         //to-do 4 : to-do 추가
         binding.dailyTodo.setOnClickListener {
-            dailyData.add(DailyTodo(false, date, "EMPTY", username, 0, "", true))
+            dailyData.add(DailyTodo(false, date, "EMPTY", "username", 0, "", true))
             dailyAdapter?.notifyItemInserted(dailyData.size -1)
         }
     }
 
-    //api 에서 값 받아 와서 초기 설정 (연결 성공)
+    //TODO : api 에서 값 받아 와서 초기 설정
     private fun getDailyTodoInfo(token:String, date:String){
         RetrofitAPI.getDaily.getDailyTodo(token, date)
             .enqueue(object:retrofit2.Callback<GetDailyTodo>{
@@ -86,47 +88,42 @@ class TodoActivity: AppCompatActivity() {
                     call: Call<GetDailyTodo>,
                     response: Response<GetDailyTodo>
                 ) {
-                    if(response.code() == 200){
+                    if(response.body()?.header?.code == 200){
                         Log.e("Yuri", "값 전달 됨")
                         addDailyTodo(response.body())
                     } else{
                         Log.e("Yuri", "sth wrong..! OMG")
                         Log.e("Yuri", "${response.code()}")
-                        Log.e("Yuri", "${response.body()?.header?.message}")
                     }
                 }
                 override fun onFailure(call: Call<GetDailyTodo>, t: Throwable) {
                     Log.e("Yuri", "서버 연결 실패")
-                    Log.e("Yuri", t.toString())
+                    Log.d("Yuri", t.toString())
                 }
             })
     }
 
     //리스트 에 받아온 정보 연결
     private fun addDailyTodo(searchResult:GetDailyTodo?){
-        dailyData.clear()
         if(!searchResult?.body.isNullOrEmpty()){
             //daily to-do 존재함
+            dailyData.clear()
             for(document in searchResult!!.body){
                 //결과를 recycler View 에 추가
                 val todo = DailyTodo(
                     document.complete,
                     document.date,
                     document.imageUrl,
-                    document.name,
+                    document.memberName,
                     document.private_todo_id,
                     document.task,
                     false
                 )
                 dailyData.add(todo)
-                username = document.name
-                Log.d("Yuri", "task : ${document.task}")
             }
-            Log.d("Yuri", "Username : $username")
-            dailyAdapter?.notifyDataSetChanged()
         }else{
             //to-do 없음
-            Log.d("Yuri", "결과 없음")
+            Log.e("Yuri", "결과 없음")
         }
     }
 
@@ -150,7 +147,7 @@ class TodoActivity: AppCompatActivity() {
         modify?.setOnClickListener {
             bottomSheetDialog.dismiss()
             dailyData[position].modifyClicked = true
-            dailyAdapter?.notifyItemChanged(position)
+            dailyAdapter?.notifyDataSetChanged()
         }
 
         //투두 삭제
@@ -164,9 +161,9 @@ class TodoActivity: AppCompatActivity() {
         //TODO : 서버에 요청 -> 이미지 없을 때 값 통일
         val image = bottomSheetDialog.findViewById<Button>(R.id.btn_delete_photo)
         if(dailyData[position].imageUrl == "EMPTY"){
-            image?.setText(R.string.upload_todo)
+            image?.text = "upload photo"
         }else{
-            image?.setText(R.string.delete_photo)
+            image?.text = "delete photo"
         }
         image?.setOnClickListener {
             bottomSheetDialog.dismiss()
@@ -177,7 +174,7 @@ class TodoActivity: AppCompatActivity() {
                 //사진 삭제
                 dailyData[position].imageUrl = "EMPTY"
                 //TODO : 여기서 서버 연결
-                dailyAdapter?.notifyItemChanged(position)
+                dailyAdapter?.notifyDataSetChanged()
             }
         }
         bottomSheetDialog.show()
@@ -219,7 +216,7 @@ class TodoActivity: AppCompatActivity() {
         dailyData[position].imageUrl = imageUrl
         //TODO 여기서 서버 연결 : position 활용 해서 정보 찾아서 연결
 
-        dailyAdapter?.notifyItemChanged(position)
+        dailyAdapter?.notifyDataSetChanged()
         Log.e("Yuri", imageUrl)
     }
 
