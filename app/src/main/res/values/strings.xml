@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Greendar</string>
+    <string name="upload_todo">upload photo</string>
+    <string name="delete_photo">delete photo</string>
 </resources>
