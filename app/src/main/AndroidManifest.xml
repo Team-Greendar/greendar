@@ -20,7 +20,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:requestLegacyExternalStorage="true"
         >
-        <!--<activity
+        <activity
             android:name=".SettingsActivity"
             android:exported="false">
             <meta-data
@@ -42,7 +42,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
         <activity android:name="com.example.greendar.ui.view.TodoActivity"
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name="com.example.greendar.ui.view.RegisterActivity"/>
