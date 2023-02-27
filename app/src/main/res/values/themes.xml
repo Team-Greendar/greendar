@@ -12,5 +12,24 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="MyTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxStrokeColor">@color/text_input_box_stroke</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxBackgroundColor">@color/semi_gray</item>
+        <item name="android:textCursorDrawable">@color/black</item>
+        <item name="hintTextColor">@color/gray</item>
+        <item name="android:textColorHint">@color/gray</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="background">@android:color/transparent</item>
     </style>
 </resources>

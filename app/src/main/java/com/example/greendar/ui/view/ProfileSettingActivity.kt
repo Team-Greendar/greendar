@@ -2,7 +2,6 @@ package com.example.greendar.ui.view
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -17,7 +16,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.loader.content.CursorLoader
 import com.bumptech.glide.Glide
 import com.example.greendar.data.api.RetrofitAPI
 import com.example.greendar.data.model.PostRegisterUser
@@ -100,7 +98,7 @@ class ProfileSettingActivity:AppCompatActivity() {
             val username = binding.textInputEditTextUsername.text.toString()
             val message = binding.textInputEditTextStatusMessage.text.toString()
 
-            //구글 회원 가입
+            /*//구글 회원 가입
             if (intent.getStringExtra("provider") == "com.google") {
                 val googleEmail = intent.getStringExtra("googleEmail").toString()
                 val googlePassword = intent.getStringExtra("googlePassword").toString()
@@ -127,7 +125,7 @@ class ProfileSettingActivity:AppCompatActivity() {
                     PostRegisterUser(email, uid, username, password, fileAddress, message)
                 Log.d("Yuri", "imageUrl : $fileAddress, message: $message")
                 postUserInfo(postRegister)
-            }
+            }*/
         }
     }
 
@@ -142,14 +140,15 @@ class ProfileSettingActivity:AppCompatActivity() {
                 ) {
                     if(response.body()?.header?.status == 500){
                         Log.e("Yuri", "서버 로직 에러")
-                        Toast.makeText(this@ProfileSettingActivity, "서버 로직 에러", Toast.LENGTH_SHORT).show()
                     }
                     else if(response.body()?.header?.status == 405){
                         Log.e("Yuri", "파일 형식 혹은 파일 파라미터의 이름 오류 혹은 파일 없음")
                     }
                     else if(response.body()?.header?.status == 200){
                         Log.e("Yuri", "서버 연결 and response 성공")
+                        Log.e("Yuri", "서버에서 받아온 주소 : ${response.body()?.body!!}")
                         fileAddress = response.body()?.body!!
+                        Log.d("Yuri", "fileAddress: $fileAddress")
                     }
                     else{
                         Log.e("Yuri", "sth wrong...! OMG")
@@ -196,7 +195,7 @@ class ProfileSettingActivity:AppCompatActivity() {
     }
 
     //이미지 절대 경로 찾기
-    private fun getRealPathFromURI(uri: Uri):String{
+    /*private fun getRealPathFromURI(uri: Uri):String{
         val proj = arrayOf(MediaStore.Images.Media.DATA)
         val cursorLoader = CursorLoader(this, uri, proj, null, null, null)
         val cursor: Cursor? = cursorLoader.loadInBackground()
@@ -206,7 +205,22 @@ class ProfileSettingActivity:AppCompatActivity() {
         val url: String = cursor.getString(columnIndex)
         cursor.close()
         return url
+    }*/
+
+    private fun getRealPathFromURI(contentURI: Uri): String? {
+        val result: String?
+        val cursor = contentResolver.query(contentURI, null, null, null, null)
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.path
+        } else {
+            cursor.moveToFirst()
+            val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+            result = cursor.getString(idx)
+            cursor.close()
+        }
+        return result
     }
+
 
     private fun init(){
         launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){result ->
@@ -219,7 +233,10 @@ class ProfileSettingActivity:AppCompatActivity() {
                         .load(imageUri)
                         .into(binding.btnProfile)
                 }
-                filePath = getRealPathFromURI(imageUri!!)
+
+                Log.d("Yuri", "imageUri : $imageUri")
+                //TODO
+                //filePath = getRealPathFromURI(imageUri!!)!!
             }
         }
     }

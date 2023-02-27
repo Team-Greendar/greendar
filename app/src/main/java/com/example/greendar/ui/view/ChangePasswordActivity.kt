@@ -10,7 +10,7 @@ import com.example.greendar.databinding.ActivityChangePasswordBinding
 
 class ChangePasswordActivity:AppCompatActivity() {
 
-    private lateinit var binding:ActivityChangePasswordBinding
+    private lateinit var binding: ActivityChangePasswordBinding
 
     //check flag
     private var passwordFlag = false
@@ -19,7 +19,7 @@ class ChangePasswordActivity:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
 
         binding = ActivityChangePasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
