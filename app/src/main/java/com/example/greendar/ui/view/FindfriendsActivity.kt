@@ -1,4 +1,4 @@
-package com.example.greendar
+package com.example.greendar.ui.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
