@@ -235,7 +235,7 @@ class ProfileSettingActivity:AppCompatActivity() {
                 }
 
                 Log.d("Yuri", "imageUri : $imageUri")
-                //TODO
+                //TODO : 이미지 경로 연결 - 절대 경로 만드는 부분 에서 문제 생기는 것 같음
                 //filePath = getRealPathFromURI(imageUri!!)!!
             }
         }

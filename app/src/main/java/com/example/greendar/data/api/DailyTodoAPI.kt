@@ -3,6 +3,7 @@ package com.example.greendar.data.api
 import com.example.greendar.data.model.*
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -36,5 +37,11 @@ interface DailyTodoAPI {
         @Header("Authorization") token:String,
         @Body putDailyTodoTaskModify: PutDailyTodoTaskModify
     ):Call<ResponseDailyNewTodo>
+
+    @DELETE("/api/v1/private/todo/{private_to_do}")
+    fun deleteDailyTodo(
+        @Header("Authorization") token:String,
+        @Path("private_to_do") private_todo_id:Int
+    ):Call<ResponseDeleteDailyTodo>
 
 }

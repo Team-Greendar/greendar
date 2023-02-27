@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.Window
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,13 +19,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.loader.content.CursorLoader
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.greendar.R
-
 import com.example.greendar.data.api.RetrofitAPI
 import com.example.greendar.data.model.GetDailyTodo
+import com.example.greendar.data.model.GetEventTodo
+import com.example.greendar.data.model.ResponseDeleteDailyTodo
 import com.example.greendar.data.recycler.DailyAdapter
 import com.example.greendar.data.recycler.DailyTodo
+import com.example.greendar.data.recycler.EventAdapter
+import com.example.greendar.data.recycler.EventTodo
 import com.example.greendar.data.recycler.UserInfo.date
 import com.example.greendar.data.recycler.UserInfo.token
 import com.example.greendar.data.recycler.UserInfo.username
@@ -41,11 +44,10 @@ class TodoActivity: AppCompatActivity() {
     var publicPosition = 0
 
     //recyclerView 가 불러올 목록
-
     private var dailyAdapter: DailyAdapter? = null
     private var dailyData:MutableList<DailyTodo> = mutableListOf()
-
-
+    private var eventAdapter :EventAdapter? = null
+    private var eventData:MutableList<EventTodo> = mutableListOf()
 
     init{
         instance = this
@@ -71,26 +73,32 @@ class TodoActivity: AppCompatActivity() {
         //supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
 
-        //TODO : GET api info 연결 함수 작성
+        //daily to-do 정보 불러옴
         getDailyTodoInfo(token, date)
+        //todo : event to-do 정보 불러옴
+        getEventTodoInfo(token, date)
 
+        //activity 에 recycler 연결
         dailyAdapter = DailyAdapter()
         dailyAdapter!!.listData = dailyData
         binding.recyclerViewDailyTodo.adapter = dailyAdapter
-
         binding.recyclerViewDailyTodo.layoutManager = LinearLayoutManager(this)
+
+        eventAdapter = EventAdapter()
+        eventAdapter!!.listData = eventData
+        binding.recyclerViewEventTodo.adapter = eventAdapter
+        binding.recyclerViewEventTodo.layoutManager = LinearLayoutManager(this)
 
         init()
 
         //to-do 4 : to-do 추가
         binding.dailyTodo.setOnClickListener {
-
             dailyData.add(DailyTodo(false, date, "EMPTY", username, 0, "", true))
             dailyAdapter?.notifyItemInserted(dailyData.size -1)
         }
     }
 
-    //api 에서 값 받아 와서 초기 설정 (연결 성공)
+    //(api - 성공) daily 투두 일자별 검색
     private fun getDailyTodoInfo(token:String, date:String){
         RetrofitAPI.getDaily.getDailyTodo(token, date)
             .enqueue(object:retrofit2.Callback<GetDailyTodo>{
@@ -99,22 +107,46 @@ class TodoActivity: AppCompatActivity() {
                     response: Response<GetDailyTodo>
                 ) {
                     if(response.code() == 200){
-                        Log.e("Yuri", "값 전달 됨")
+                        Log.e("Yuri", "데일리 투두 값 전달 됨")
                         addDailyTodo(response.body())
                     } else{
-                        Log.e("Yuri", "sth wrong..! OMG")
+                        Log.e("Yuri", "데일리 투두 sth wrong..! OMG")
                         Log.e("Yuri", "${response.code()}")
                         Log.e("Yuri", "${response.body()?.header?.message}")
                     }
                 }
                 override fun onFailure(call: Call<GetDailyTodo>, t: Throwable) {
-                    Log.e("Yuri", "서버 연결 실패")
+                    Log.e("Yuri", "데일리 투두 서버 연결 실패")
                     Log.e("Yuri", t.toString())
                 }
             })
     }
 
-    //리스트 에 받아온 정보 연결
+    //todo : event 투두 일자별 검색
+    private fun getEventTodoInfo(token:String, date:String){
+        RetrofitAPI.getEvent.getEventTodo(token, date)
+            .enqueue(object:retrofit2.Callback<GetEventTodo>{
+                override fun onResponse(
+                    call: Call<GetEventTodo>,
+                    response: Response<GetEventTodo>
+                ) {
+                    if(response.code() == 200){
+                        Log.e("Yuri", "Event Todo 값 전달 됨")
+                        addEventTodo(response.body())
+                    } else{
+                        Log.e("Yuri", "이벤트 투두 sth wrong..! OMG")
+                        Log.e("Yuri", "${response.code()}")
+                        Log.e("Yuri", "${response.body()?.header?.message}")
+                    }
+                }
+                override fun onFailure(call: Call<GetEventTodo>, t: Throwable) {
+                    Log.e("Yuri", "이벤트 투두 서버 연결 실패")
+                    Log.e("Yuri", t.toString())
+                }
+            })
+    }
+
+    //daily 투두 리스트 정보 연결
     private fun addDailyTodo(searchResult:GetDailyTodo?){
         dailyData.clear()
         if(!searchResult?.body.isNullOrEmpty()){
@@ -138,12 +170,37 @@ class TodoActivity: AppCompatActivity() {
             dailyAdapter?.notifyDataSetChanged()
         }else{
             //to-do 없음
-            Log.d("Yuri", "결과 없음")
+            Log.d("Yuri", "데일리 투두 결과 없음")
         }
     }
 
+    //todo : event 투두 리스트 정보 연결
+    private fun addEventTodo(searchResult:GetEventTodo?){
+        eventData.clear()
+        if(!searchResult?.body.isNullOrEmpty()){
+            //event to-do 존재함
+            for(document in searchResult!!.body){
+                //결과를 recycler View 에 추가
+                val todo = EventTodo(
+                    document.complete,
+                    document.date,
+                    document.imageUrl,
+                    document.eventTodoItemId,
+                    document.task
+                )
+                eventData.add(todo)
+                Log.d("Yuri", "task: ${document.task}")
+            }
+            eventAdapter?.notifyDataSetChanged()
+        }else{
+            //to-do 없음
+            Log.d("Yuri", "이벤트 투두 결과 없음")
+        }
+    }
+
+
     //Event to do (고정 투두)
-    fun showEventBottomSheetDialog() {
+    fun showEventBottomSheetDialog(member:EventTodo, position: Int) {
         val bottomSheetDialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
         bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog_event_todo)
         //TODO 1 : 사진 추가, 삭제
@@ -171,13 +228,14 @@ class TodoActivity: AppCompatActivity() {
         val delete = bottomSheetDialog.findViewById<Button>(R.id.btn_delete_todo)
         delete?.setOnClickListener {
             bottomSheetDialog.dismiss()
+            Log.e("Yuri", "삭제 버튼 누름")
+            Log.e("Yuri", "todo id : ${dailyData[position].private_todo_id}")
 
+            deleteDailyTodo(token, dailyData[position].private_todo_id)
             deleteTodo(member)
         }
 
-
         //이미지 추가, 삭제
-        //TODO : 서버에 요청 -> 이미지 없을 때 값 통일
         val image = bottomSheetDialog.findViewById<Button>(R.id.btn_delete_photo)
         if(dailyData[position].imageUrl == "EMPTY"){
             image?.setText(R.string.upload_todo)
@@ -187,7 +245,6 @@ class TodoActivity: AppCompatActivity() {
 
         //TODO 3 : 이미지 추가, 삭제
         //TODO : 이미지 선택 후, 이미지 uri를 dailydata리스트에 저장, dailyadapter?.notifyDataSetChanged() 추가.
-        //TODO : 이미지 boolean = false -> 버튼 = add photo,  이미지 boolean = true -> 버튼 = delete photo
         image?.setOnClickListener {
             bottomSheetDialog.dismiss()
             publicPosition = position
@@ -207,6 +264,30 @@ class TodoActivity: AppCompatActivity() {
     fun deleteTodo(member:DailyTodo){
         dailyData.remove(member)
         dailyAdapter?.notifyDataSetChanged()
+    }
+
+    //(api - 성공) to-do : 투두 삭제
+    fun deleteDailyTodo(token:String, todoId:Int){
+        RetrofitAPI.getDaily.deleteDailyTodo(token, todoId)
+            .enqueue(object:retrofit2.Callback<ResponseDeleteDailyTodo>{
+                override fun onResponse(
+                    call: Call<ResponseDeleteDailyTodo>,
+                    response: Response<ResponseDeleteDailyTodo>
+                ) {
+                    if (response.code() == 200) {
+                        Log.e("Yuri", "투두 삭제 : 서버 연결 성공")
+                        Log.e("Yuri", "투두 삭제 : ${response.body()!!.body}")
+                    } else {
+                        Log.e("Yuri", "있는 투두 수정 : sth wrong..! OMG")
+                        Log.e("Yuri", "${response.code()}")
+                        Log.e("Yuri", "${response.body()?.header?.message}")
+                    }
+                }
+                override fun onFailure(call: Call<ResponseDeleteDailyTodo>, t: Throwable) {
+                    Log.e("Yuri", "서버 연결 실패")
+                    Log.e("Yuri", t.toString())
+                }
+            })
     }
 
     private fun init(){
@@ -248,6 +329,8 @@ class TodoActivity: AppCompatActivity() {
         intent.type = "image/jpeg"
         launcher.launch(intent)
     }
+
+
 
     //UserPermission 1
     private fun checkPermission(){

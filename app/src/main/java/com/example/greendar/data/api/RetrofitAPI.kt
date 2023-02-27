@@ -20,4 +20,8 @@ object RetrofitAPI {
     val getDaily:DailyTodoAPI by lazy{
         retrofit.create(DailyTodoAPI::class.java)
     }
+
+    val getEvent:EventTodoAPI by lazy{
+        retrofit.create(EventTodoAPI::class.java)
+    }
 }
