@@ -1,4 +1,4 @@
-package com.example.calendar_new
+package com.example.greendar.ui.view
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -148,7 +148,7 @@ class CalendarActivity : AppCompatActivity() {
             .create(PrivateMonthRatioInterface::class.java)
         Log.d("hhh", "연결 확인 중2")
 
-       /* val retrofitData = retrofitBuilder.getData(token = "T4kZ7TfIOUXRVYAa3GXOWnJllEr1", date = "2021-12-23")*/
+        /* val retrofitData = retrofitBuilder.getData(token = "T4kZ7TfIOUXRVYAa3GXOWnJllEr1", date = "2021-12-23")*/
         val retrofitData = retrofitBuilder.getData(token = "222222", date = month)
 
 
@@ -180,6 +180,3 @@ class CalendarActivity : AppCompatActivity() {
     }
 
 }
-
-
-

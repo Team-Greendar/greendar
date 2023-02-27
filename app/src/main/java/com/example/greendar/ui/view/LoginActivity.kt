@@ -9,7 +9,6 @@ import android.view.Window
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.example.greendar.R
 import com.example.greendar.data.api.RetrofitAPI
 import com.example.greendar.data.model.ResponseRegisterUser
 import com.example.greendar.databinding.ActivityLoginBinding
@@ -107,7 +106,7 @@ class LoginActivity:AppCompatActivity() {
         binding.btnLoginGoogle.setOnClickListener {
             val gso = GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken("923471445103-g69s7l8gp5qjh8k3phhb6fqnsojoee16.apps.googleusercontent.com")
                 .requestEmail()
                 .requestProfile()
                 .build()

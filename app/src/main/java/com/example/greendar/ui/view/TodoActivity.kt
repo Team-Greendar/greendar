@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Window
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -17,7 +18,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.loader.content.CursorLoader
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.greendar.R
+
 import com.example.greendar.data.api.RetrofitAPI
 import com.example.greendar.data.model.GetDailyTodo
 import com.example.greendar.data.recycler.DailyAdapter
@@ -31,15 +34,18 @@ import retrofit2.Call
 import retrofit2.Response
 
 class TodoActivity: AppCompatActivity() {
-    private lateinit var binding:ActivityTodoBinding
+    private lateinit var binding: ActivityTodoBinding
 
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private var filePath = ""
-    private var publicPosition = 0
+    var publicPosition = 0
 
     //recyclerView 가 불러올 목록
+
     private var dailyAdapter: DailyAdapter? = null
     private var dailyData:MutableList<DailyTodo> = mutableListOf()
+
+
 
     init{
         instance = this
@@ -54,6 +60,9 @@ class TodoActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
         binding = ActivityTodoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -61,18 +70,21 @@ class TodoActivity: AppCompatActivity() {
         //supportActionBar?.setDisplayShowTitleEnabled(true)
         //supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
+
         //TODO : GET api info 연결 함수 작성
         getDailyTodoInfo(token, date)
 
         dailyAdapter = DailyAdapter()
         dailyAdapter!!.listData = dailyData
         binding.recyclerViewDailyTodo.adapter = dailyAdapter
+
         binding.recyclerViewDailyTodo.layoutManager = LinearLayoutManager(this)
 
-        init()  //사진 관련
+        init()
 
         //to-do 4 : to-do 추가
         binding.dailyTodo.setOnClickListener {
+
             dailyData.add(DailyTodo(false, date, "EMPTY", username, 0, "", true))
             dailyAdapter?.notifyItemInserted(dailyData.size -1)
         }
@@ -149,16 +161,20 @@ class TodoActivity: AppCompatActivity() {
         val modify = bottomSheetDialog.findViewById<Button>(R.id.btn_modify_todo)
         modify?.setOnClickListener {
             bottomSheetDialog.dismiss()
+
             dailyData[position].modifyClicked = true
             dailyAdapter?.notifyItemChanged(position)
+
         }
 
         //투두 삭제
         val delete = bottomSheetDialog.findViewById<Button>(R.id.btn_delete_todo)
         delete?.setOnClickListener {
             bottomSheetDialog.dismiss()
+
             deleteTodo(member)
         }
+
 
         //이미지 추가, 삭제
         //TODO : 서버에 요청 -> 이미지 없을 때 값 통일
@@ -168,6 +184,10 @@ class TodoActivity: AppCompatActivity() {
         }else{
             image?.setText(R.string.delete_photo)
         }
+
+        //TODO 3 : 이미지 추가, 삭제
+        //TODO : 이미지 선택 후, 이미지 uri를 dailydata리스트에 저장, dailyadapter?.notifyDataSetChanged() 추가.
+        //TODO : 이미지 boolean = false -> 버튼 = add photo,  이미지 boolean = true -> 버튼 = delete photo
         image?.setOnClickListener {
             bottomSheetDialog.dismiss()
             publicPosition = position
@@ -177,6 +197,7 @@ class TodoActivity: AppCompatActivity() {
                 //사진 삭제
                 dailyData[position].imageUrl = "EMPTY"
                 //TODO : 여기서 서버 연결
+
                 dailyAdapter?.notifyItemChanged(position)
             }
         }
@@ -195,9 +216,17 @@ class TodoActivity: AppCompatActivity() {
                 val imageUri = intent.data
                 filePath = getRealPathFromURI(imageUri!!)  //서버에 보내는 uri
 
-                uploadPhoto(publicPosition, imageUri.toString())  //todo : parameter 에 filePath 추가 해서 서버 연결 할 때 사용
+                uploadPhoto(publicPosition, imageUri.toString())  //todo : parameter에 filepath 추가 해서 서버 연결할 때 사용
             }
         }
+    }
+
+    fun uploadPhoto(position:Int, imageUrl:String) {
+        dailyData[position].imageUrl = imageUrl
+        //TODO 여기서 서버 연결 : position 활용 해서 정보 찾아서 연결
+
+        dailyAdapter?.notifyDataSetChanged()
+        Log.e("Yuri", imageUrl)
     }
 
     //이미지 절대 경로 찾기
@@ -211,16 +240,6 @@ class TodoActivity: AppCompatActivity() {
         val url: String = cursor.getString(columnIndex)
         cursor.close()
         return url
-    }
-
-
-    //TODO : 사진 올리는 함수 (서버 연결)
-    fun uploadPhoto(position:Int, imageUrl:String){
-        dailyData[position].imageUrl = imageUrl
-        //TODO 여기서 서버 연결 : position 활용 해서 정보 찾아서 연결
-
-        dailyAdapter?.notifyItemChanged(position)
-        Log.e("Yuri", imageUrl)
     }
 
     //갤러리 에서 사진 가져 오기
@@ -272,7 +291,7 @@ class TodoActivity: AppCompatActivity() {
             .show()
     }
 
-    //User Permission 3
+    //UserPermission 3
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
