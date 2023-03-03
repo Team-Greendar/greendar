@@ -3,13 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/item1"
-        android:title="Add Friends"
+        android:title="1. Add Friends"
         android:icon="@drawable/add_friends"
-        app:showAsAction="never"/>
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/item2"
-        android:title="Settings"
+        android:title="Friend's Greendar"
+        android:icon="@drawable/leaf_black"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/item3"
         android:icon="@drawable/setting_black"
-        app:showAsAction="never"/>
+        android:title="2. Settings"
+        app:showAsAction="always"/>
+
 </menu>

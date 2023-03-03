@@ -12,24 +12,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageButton
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:paddingHorizontal="17dp"
-            android:paddingVertical="17dp"
-            android:scaleType="fitCenter"
-            tools:ignore="SpeakableTextPresentCheck"
-            android:src="@drawable/left_point"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="15dp"
-            android:backgroundTint="#00000000" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
             android:text="Setting"
-            android:layout_marginLeft="110dp"
+            android:layout_marginLeft="170dp"
             android:textColor="#ABABAB"
             android:textSize="20sp"
             android:textStyle="bold" />
