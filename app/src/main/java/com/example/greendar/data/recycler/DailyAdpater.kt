@@ -36,7 +36,6 @@ import retrofit2.Response
 //RecyclerView 의 Adapter
 class DailyAdapter(val view: Context):RecyclerView.Adapter<DailyAdapter.Holder>() {
 
-    //val context  = view
     var listData = mutableListOf<DailyTodo>()
 
     //몇 개의 목록을 만들지 반환
@@ -81,9 +80,14 @@ class DailyAdapter(val view: Context):RecyclerView.Adapter<DailyAdapter.Holder>(
                 }
             }
 
+            binding.ivPhoto.setOnClickListener {
+                todoActivity?.showImageBottomSheetDialog(mMember!!.imageUrl, mMember!!.task, mMember!!.date)
+            }
+
             binding.btnThreeDot.setOnClickListener {
                 todoActivity?.showDailyBottomSheetDialog(mMember!!, mPosition!!)
             }
+
         }
 
         fun setData(member: DailyTodo, position: Int) {

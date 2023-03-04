@@ -61,6 +61,10 @@ class EventAdapter:RecyclerView.Adapter<EventAdapter.Holder>() {
                 }
             }
 
+            binding.ivPhoto.setOnClickListener {
+                todoActivity?.showImageBottomSheetDialog(mMember!!.imageUrl, mMember!!.task, mMember!!.date)
+            }
+
             binding.btnThreeDot.setOnClickListener {
                 todoActivity?.showEventBottomSheetDialog(mMember!!, mPosition!!)
             }

@@ -8,14 +8,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.view.Window
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.loader.content.CursorLoader
@@ -23,8 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.greendar.R
@@ -38,10 +37,11 @@ import com.example.greendar.data.recycler.UserInfo.date
 import com.example.greendar.data.recycler.UserInfo.token
 import com.example.greendar.data.recycler.UserInfo.username
 import com.example.greendar.databinding.ActivityTodoBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -110,12 +110,6 @@ class TodoActivity: AppCompatActivity() {
             dailyAdapter?.notifyItemInserted(dailyData.size -1)
         }
 
-        //링크 확인
-        /*
-        binding.btnLink.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://storage.cloud.google.com/greendar_storage/test/Screenshot_20230222-182438_Greendar.jpg-haQc5L.jpg"))
-            startActivity(intent)
-        }*/
 
 
         //val path = "https://storage.cloud.google.com/greendar_storage/test/Screenshot_20230222-182438_Greendar.jpg-q0l5Td.jpg"
@@ -222,6 +216,68 @@ class TodoActivity: AppCompatActivity() {
         }
     }
 
+    //todo : 이미지 연동 필요 -> 어뎁터 에서 이미지 주소, task, date 가져 와야 한다.
+    fun showImageBottomSheetDialog(imageUrl: String, task:String, date:String){
+        val bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog.setContentView(R.layout.bottom_sheet_show_image)
+        bottomSheetDialog.behavior.state = STATE_EXPANDED
+
+        val image = bottomSheetDialog.findViewById<ImageView>(R.id.iv_image)
+        val tvTask = bottomSheetDialog.findViewById<TextView>(R.id.tv_task)
+        val tvDate = bottomSheetDialog.findViewById<TextView>(R.id.tv_date)
+        val exit = bottomSheetDialog.findViewById<ImageButton>(R.id.btn_exit)
+        val popTop = bottomSheetDialog.findViewById<ConstraintLayout>(R.id.pop_top)
+        val popBottom = bottomSheetDialog.findViewById<ConstraintLayout>(R.id.pop_bottom)
+
+        //이미지 임시 코드
+        var path = "https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=1200&q=60"
+        path = "https://images.unsplash.com/photo-1677840147160-6545dba6f08d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
+
+        tvTask?.text = task
+        tvDate?.text = date
+
+        Glide.with(image!!)
+            .load(path)
+            .listener(object: RequestListener<Drawable> {
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    Log.d("Yuri", "image success")
+                    return false
+                }
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    Log.e("Yuri", "fail : ${e.toString()}")
+                    return false
+                }
+            })
+            .error(R.drawable.add_friends)
+            .into(image)
+
+        image.setOnClickListener{
+            if((popTop?.visibility == View.VISIBLE) and (popBottom?.visibility == View.VISIBLE)){
+                exit?.setOnClickListener  {
+                    bottomSheetDialog.dismiss()
+                }
+                popTop?.visibility = View.INVISIBLE
+                popBottom?.visibility = View.INVISIBLE
+            }else if((popTop?.visibility == View.INVISIBLE) and (popBottom?.visibility == View.INVISIBLE)){
+                popTop?.visibility = View.VISIBLE
+                popBottom?.visibility = View.VISIBLE
+            }
+        }
+
+
+        bottomSheetDialog.show()
+    }
 
     //Event to do (고정 투두)
     fun showEventBottomSheetDialog(member:EventTodo, position: Int) {
@@ -231,7 +287,6 @@ class TodoActivity: AppCompatActivity() {
         //바텀 시트 텍스트 연결
         val todoText = bottomSheetDialog.findViewById<TextView>(R.id.tv_todo_text)
         todoText!!.text = eventData[position].task
-
 
         val image = bottomSheetDialog.findViewById<Button>(R.id.btn_upload_photo)
         if(eventData[position].imageUrl == "EMPTY"){
@@ -317,6 +372,7 @@ class TodoActivity: AppCompatActivity() {
         }
         bottomSheetDialog.show()
     }
+
 
     fun deleteTodo(member:DailyTodo){
         dailyData.remove(member)

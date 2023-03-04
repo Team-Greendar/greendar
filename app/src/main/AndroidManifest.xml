@@ -35,7 +35,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <!--<activity
+        <activity
             android:name="com.example.greendar.ui.view.CalendarActivity"
             android:exported="true">
             <intent-filter>
@@ -43,12 +43,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
 
 
         <activity android:name="com.example.greendar.ui.view.TodoActivity"
             android:windowSoftInputMode="adjustPan"/>
-
         <activity android:name="com.example.greendar.ui.view.RegisterActivity"/>
         <activity android:name="com.example.greendar.ui.view.RegisterPasswordActivity"/>
         <activity android:name="com.example.greendar.ui.view.LoginActivity"/>
