@@ -14,4 +14,5 @@
     <color name="semi_white">#FFF5F5F5</color>
     <color name="semi_gray">#FFEDEDED</color>
     <color name="gray">#FF808080</color>
+    <color name="app_bar">#C6D3C1</color>
 </resources>

@@ -33,9 +33,16 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    dataBinding{
+        enabled = true
+    }
+
+
     viewBinding{
         enabled = true
     }
+
 }
 
 dependencies {
@@ -51,6 +58,7 @@ dependencies {
 
     //material-calendarView
     implementation 'com.prolificinteractive:material-calendarview:1.4.3'
+
 
     //gson, retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
