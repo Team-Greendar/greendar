@@ -13,9 +13,10 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import com.example.calendar_new.PrivateMonthRatioInterface
-import com.example.calendar_new.model.MyData
+
 import com.example.greendar.R
+import com.example.greendar.data.api.PrivateMonthRatioInterface
+import com.example.greendar.data.model.MyData
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener

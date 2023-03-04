@@ -1,7 +1,9 @@
 package com.example.greendar.data.recycler
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -10,6 +12,13 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.greendar.R
 import com.example.greendar.data.api.RetrofitAPI
 import com.example.greendar.data.model.PostDailyNewTodo
@@ -25,8 +34,9 @@ import retrofit2.Response
 
 
 //RecyclerView 의 Adapter
-class DailyAdapter:RecyclerView.Adapter<DailyAdapter.Holder>() {
+class DailyAdapter(val view: Context):RecyclerView.Adapter<DailyAdapter.Holder>() {
 
+    //val context  = view
     var listData = mutableListOf<DailyTodo>()
 
     //몇 개의 목록을 만들지 반환
@@ -44,6 +54,8 @@ class DailyAdapter:RecyclerView.Adapter<DailyAdapter.Holder>() {
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val member = listData[position]
         holder.setData(member, position)
+
+
     }
 
     //뷰 홀더
@@ -140,9 +152,49 @@ class DailyAdapter:RecyclerView.Adapter<DailyAdapter.Holder>() {
                     }
                 }
             }
+
+            //TODO : 이미지 초기 설정
+            if(mMember!!.imageUrl == "EMPTY"){
+                //없으면 투명 하고, 터치 못하게 설정
+                binding.ivPhoto.isEnabled = false
+                binding.ivPhoto.setImageResource(R.drawable.iv_invisible_box)
+            }else{
+                binding.ivPhoto.isEnabled = true
+                val path = "https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=1200&q=60"
+
+                //todo : http 이미지 를 못 불러 온다...
+                if(member.imageUrl != "EMPTY"){
+                    Log.d("Yuri", "link : ${member.imageUrl}")
+                    Glide.with(binding.ivPhoto)
+                        //.load(member.imageUrl)
+                        .load(path)
+                        .listener(object:RequestListener<Drawable>{
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                return false
+                            }
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                Log.e("Yuri", "fail : ${e.toString()}")
+                                return false
+                            }
+                        })
+                        .error(R.drawable.add_friends)
+                        .transform(CenterCrop(), RoundedCorners(5))
+                        .into(binding.ivPhoto)
+                }
+            }
         }
 
-        //TODO : to-do 이미지 추가, 삭제
 
 
         /* ========= API 연결 함수 작성 ========= */
@@ -165,7 +217,6 @@ class DailyAdapter:RecyclerView.Adapter<DailyAdapter.Holder>() {
                             Log.e("Yuri", "${response.body()?.header?.message}")
                         }
                     }
-
                     override fun onFailure(call: Call<ResponseDailyNewTodo>, t: Throwable) {
                         Log.e("Yuri", "서버 연결 실패")
                         Log.e("Yuri", t.toString())
@@ -199,7 +250,7 @@ class DailyAdapter:RecyclerView.Adapter<DailyAdapter.Holder>() {
                 })
         }
 
-        //(api - 성공 ) to-do : 있는 투두 수정
+        //(api - 성공) to-do : 있는 투두 수정
         private fun putModifyTask(token: String, putDailyTodoTaskModify: PutDailyTodoTaskModify) {
             RetrofitAPI.getDaily.putDailyTodoTaskModify(token, putDailyTodoTaskModify)
                 .enqueue(object : retrofit2.Callback<ResponseDailyNewTodo> {
@@ -217,18 +268,11 @@ class DailyAdapter:RecyclerView.Adapter<DailyAdapter.Holder>() {
                             Log.e("Yuri", "${response.body()?.header?.message}")
                         }
                     }
-
                     override fun onFailure(call: Call<ResponseDailyNewTodo>, t: Throwable) {
                         Log.e("Yuri", "서버 연결 실패")
                         Log.e("Yuri", t.toString())
                     }
                 })
         }
-
-
-
-
-
-
     }
 }

@@ -20,7 +20,6 @@ data class PutDailyTodoTaskModify(
     val task:String
 )
 
-
 data class ResponseDailyNewTodo(
     val body: Body,
     val header: Header
@@ -31,6 +30,10 @@ data class ResponseDeleteDailyTodo(
     val body:Boolean?
 )
 
+data class ResponseDailyTodoImage(
+    val header:Header,
+    val body:Boolean
+)
 data class Head(
     val code: Int,
     val message: String

@@ -15,10 +15,15 @@ data class EventBody(
 
 data class PutEventTodoComplete(
     val complete: Boolean,
-    val eventTodoItemId: String
+    val eventTodoItemId: Int
 )
 
 data class ResponseEventTodoComplete(
-    val header:Header,
+    val header: Header,
+    val body: EventBody
 )
 
+data class ResponseDeleteEventImage(
+    val header:Header,
+    val body:Boolean
+)

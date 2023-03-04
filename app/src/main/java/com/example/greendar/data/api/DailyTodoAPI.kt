@@ -1,15 +1,12 @@
 package com.example.greendar.data.api
 
 import com.example.greendar.data.model.*
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
+import retrofit2.http.*
 import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Headers
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
 
 interface DailyTodoAPI {
 
@@ -44,4 +41,17 @@ interface DailyTodoAPI {
         @Path("private_to_do") private_todo_id:Int
     ):Call<ResponseDeleteDailyTodo>
 
+    @Multipart
+    @PUT("/api/v1/private/todo/image")
+    fun putDailyImage(
+        @Header("Authorization") token:String,
+        @Part file:MultipartBody.Part?,
+        @Part ("private_todo_id") id:Int
+    ):Call<ResponseDailyNewTodo>
+
+    @DELETE("/api/v1/private/todo/image")
+    fun deleteDailyTodoImage(
+        @Header("Authorization") token:String,
+        @Query("private_todo_id") id:Int
+    ):Call<ResponseDailyTodoImage>
 }

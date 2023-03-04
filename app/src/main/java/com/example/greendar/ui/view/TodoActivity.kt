@@ -3,13 +3,14 @@ package com.example.greendar.ui.view
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Window
 import android.widget.Button
-import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,11 +20,16 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.loader.content.CursorLoader
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.greendar.R
 import com.example.greendar.data.api.RetrofitAPI
-import com.example.greendar.data.model.GetDailyTodo
-import com.example.greendar.data.model.GetEventTodo
-import com.example.greendar.data.model.ResponseDeleteDailyTodo
+import com.example.greendar.data.model.*
 import com.example.greendar.data.recycler.DailyAdapter
 import com.example.greendar.data.recycler.DailyTodo
 import com.example.greendar.data.recycler.EventAdapter
@@ -33,8 +39,14 @@ import com.example.greendar.data.recycler.UserInfo.token
 import com.example.greendar.data.recycler.UserInfo.username
 import com.example.greendar.databinding.ActivityTodoBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 class TodoActivity: AppCompatActivity() {
     private lateinit var binding: ActivityTodoBinding
@@ -42,6 +54,7 @@ class TodoActivity: AppCompatActivity() {
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private var filePath = ""
     var publicPosition = 0
+    private var whichTodo = 0
 
     //recyclerView 가 불러올 목록
     private var dailyAdapter: DailyAdapter? = null
@@ -75,11 +88,11 @@ class TodoActivity: AppCompatActivity() {
 
         //daily to-do 정보 불러옴
         getDailyTodoInfo(token, date)
-        //todo : event to-do 정보 불러옴
+        //event to-do 정보 불러옴
         getEventTodoInfo(token, date)
 
         //activity 에 recycler 연결
-        dailyAdapter = DailyAdapter()
+        dailyAdapter = DailyAdapter(this)
         dailyAdapter!!.listData = dailyData
         binding.recyclerViewDailyTodo.adapter = dailyAdapter
         binding.recyclerViewDailyTodo.layoutManager = LinearLayoutManager(this)
@@ -96,9 +109,20 @@ class TodoActivity: AppCompatActivity() {
             dailyData.add(DailyTodo(false, date, "EMPTY", username, 0, "", true))
             dailyAdapter?.notifyItemInserted(dailyData.size -1)
         }
+
+        //링크 확인
+        /*
+        binding.btnLink.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://storage.cloud.google.com/greendar_storage/test/Screenshot_20230222-182438_Greendar.jpg-haQc5L.jpg"))
+            startActivity(intent)
+        }*/
+
+
+        //val path = "https://storage.cloud.google.com/greendar_storage/test/Screenshot_20230222-182438_Greendar.jpg-q0l5Td.jpg"
+
     }
 
-    //(api - 성공) daily 투두 일자별 검색
+    //daily 투두 일자별 검색
     private fun getDailyTodoInfo(token:String, date:String){
         RetrofitAPI.getDaily.getDailyTodo(token, date)
             .enqueue(object:retrofit2.Callback<GetDailyTodo>{
@@ -122,7 +146,7 @@ class TodoActivity: AppCompatActivity() {
             })
     }
 
-    //todo : event 투두 일자별 검색
+    //event 투두 일자별 검색
     private fun getEventTodoInfo(token:String, date:String){
         RetrofitAPI.getEvent.getEventTodo(token, date)
             .enqueue(object:retrofit2.Callback<GetEventTodo>{
@@ -174,7 +198,7 @@ class TodoActivity: AppCompatActivity() {
         }
     }
 
-    //todo : event 투두 리스트 정보 연결
+    //event 투두 리스트 정보 연결
     private fun addEventTodo(searchResult:GetEventTodo?){
         eventData.clear()
         if(!searchResult?.body.isNullOrEmpty()){
@@ -203,8 +227,35 @@ class TodoActivity: AppCompatActivity() {
     fun showEventBottomSheetDialog(member:EventTodo, position: Int) {
         val bottomSheetDialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
         bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog_event_todo)
-        //TODO 1 : 사진 추가, 삭제
 
+        //바텀 시트 텍스트 연결
+        val todoText = bottomSheetDialog.findViewById<TextView>(R.id.tv_todo_text)
+        todoText!!.text = eventData[position].task
+
+
+        val image = bottomSheetDialog.findViewById<Button>(R.id.btn_upload_photo)
+        if(eventData[position].imageUrl == "EMPTY"){
+            image?.setText(R.string.upload_todo)
+        }else{
+            image?.setText(R.string.delete_photo)
+        }
+
+        //이미지 추가, 삭제
+        image?.setOnClickListener {
+            bottomSheetDialog.dismiss()
+            publicPosition = position
+            if(eventData[position].imageUrl == "EMPTY") {
+                //사진 추가
+                whichTodo = 1
+                checkPermission()
+                eventAdapter?.notifyItemChanged(position)
+            }else{
+                //사진 삭제
+                eventData[position].imageUrl = "EMPTY"
+                deleteEventTodoImage(token, eventData[position].event_todo_id, position)
+                eventAdapter?.notifyItemChanged(position)
+            }
+        }
 
         bottomSheetDialog.show()
     }
@@ -213,6 +264,10 @@ class TodoActivity: AppCompatActivity() {
     fun showDailyBottomSheetDialog(member:DailyTodo, position:Int) {
         val bottomSheetDialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
         bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog_daily_todo)
+
+        //바텀 시트 텍스트 연결
+        val todoText = bottomSheetDialog.findViewById<TextView>(R.id.tv_todo_text)
+        todoText!!.text = dailyData[position].task
 
         //투두 수정
         val modify = bottomSheetDialog.findViewById<Button>(R.id.btn_modify_todo)
@@ -243,18 +298,20 @@ class TodoActivity: AppCompatActivity() {
             image?.setText(R.string.delete_photo)
         }
 
-        //TODO 3 : 이미지 추가, 삭제
-        //TODO : 이미지 선택 후, 이미지 uri를 dailydata리스트에 저장, dailyadapter?.notifyDataSetChanged() 추가.
+        //TO-DO 3 : 이미지 추가, 삭제
+        //TO-DO : 이미지 선택 후, 이미지 uri를 dailydata리스트에 저장, dailyadapter?.notifyDataSetChanged() 추가.
         image?.setOnClickListener {
             bottomSheetDialog.dismiss()
             publicPosition = position
             if(dailyData[position].imageUrl == "EMPTY") {
+                //사진 추가
+                whichTodo = 2
                 checkPermission()
+                dailyAdapter?.notifyItemChanged(position)
             }else{
                 //사진 삭제
                 dailyData[position].imageUrl = "EMPTY"
-                //TODO : 여기서 서버 연결
-
+                deleteDailyTodoImage(token, dailyData[position].private_todo_id, position)
                 dailyAdapter?.notifyItemChanged(position)
             }
         }
@@ -295,19 +352,39 @@ class TodoActivity: AppCompatActivity() {
             if(result.resultCode == RESULT_OK){
                 val intent = checkNotNull(result.data)
                 val imageUri = intent.data
-                filePath = getRealPathFromURI(imageUri!!)  //서버에 보내는 uri
-
-                uploadPhoto(publicPosition, imageUri.toString())  //todo : parameter에 filepath 추가 해서 서버 연결할 때 사용
+                Log.d("Yuri", "imageUri : $imageUri")
+                uploadPhoto(publicPosition, imageUri)
             }
         }
     }
 
-    fun uploadPhoto(position:Int, imageUrl:String) {
-        dailyData[position].imageUrl = imageUrl
-        //TODO 여기서 서버 연결 : position 활용 해서 정보 찾아서 연결
+    private fun uploadPhoto(position:Int, imageUrl:Uri?) {
+        filePath = getRealPathFromURI(imageUrl!!)
+        Log.d("Yuri", "절대 경로 : $filePath")
 
-        dailyAdapter?.notifyDataSetChanged()
-        Log.e("Yuri", imageUrl)
+        val file = File(filePath)
+        val requestBody = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("file", file.name, requestBody)
+
+        //todo : 데일리 or 이벤트 어케 구분 하냐... (변수로 구분)
+        when(whichTodo){
+            1 -> {
+                //이벤트 투두
+                Log.d("Yuri", "이벤트 투두 이미지 연결")
+                putEventImage(token, body, eventData[position].event_todo_id, position)
+                whichTodo = 0
+            }
+            2 ->{
+                //데일리(private) 투두
+                Log.d("Yuri", "데일리 투두 이미지 연결")
+                putDailyImage(token, body, dailyData[position].private_todo_id, position)
+                whichTodo = 0
+            }
+            else ->{
+                Log.e("Yuri", "이미지 : 데일리 인지 이벤트 인지 구분 오류 : $whichTodo")
+            }
+        }
+
     }
 
     //이미지 절대 경로 찾기
@@ -325,12 +402,122 @@ class TodoActivity: AppCompatActivity() {
 
     //갤러리 에서 사진 가져 오기
     private fun navigatePhoto(){
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        val intent = Intent(Intent.ACTION_PICK)  //(jpeg : Intent.ACTION_PICK, file : ACTION_GET_CONTENT)
         intent.type = "image/jpeg"
         launcher.launch(intent)
     }
 
+    //(api - 성공) to-do : daily to-do 이미지 추가
+    private fun putDailyImage(token:String, body:MultipartBody.Part, id:Int, position:Int){
+        RetrofitAPI.getDaily.putDailyImage(token, body, id)
+            .enqueue(object:retrofit2.Callback<ResponseDailyNewTodo>{
+                override fun onResponse(
+                    call: Call<ResponseDailyNewTodo>,
+                    response: Response<ResponseDailyNewTodo>
+                ) {
+                    if (response.code() == 200) {
+                        Log.e("Yuri", "데일리 투두 이미지 추가 여부 : 서버 연결 성공")
+                        Log.e("Yuri", "task : ${response.body()!!.body.task}")
+                        Log.e("Yuri", "imageUrl : ${response.body()!!.body.imageUrl}")
+                        dailyData[position].imageUrl = response.body()!!.body.imageUrl
+                        //dailyAdapter?.notifyDataSetChanged()
+                        dailyAdapter?.notifyItemChanged(position)
+                    } else {
+                        Log.e("Yuri", "데일리 투두 이미지 추가 여부 : sth wrong..! OMG")
+                        Log.e("Yuri", "${response.code()}")
+                        Log.e("Yuri", "${response.body()?.header?.message}")
+                    }
+                }
+                override fun onFailure(call: Call<ResponseDailyNewTodo>, t: Throwable) {
+                    Log.e("Yuri", "데일리 투두 서버 연결 실패")
+                    Log.e("Yuri", t.toString())
+                }
+            })
+    }
 
+    //(api - 성공) to-do : event to-do 이미지 추가
+    private fun putEventImage(token:String, body:MultipartBody.Part, id:Int, position:Int){
+        RetrofitAPI.getEvent.putEventImage(token, body, id)
+            .enqueue(object:Callback<ResponseEventTodoComplete>{
+                override fun onResponse(
+                    call: Call<ResponseEventTodoComplete>,
+                    response: Response<ResponseEventTodoComplete>
+                ) {
+                    if (response.code() == 200) {
+                        Log.e("Yuri", "이벤트 투두 이미지 추가 여부 : 서버 연결 성공")
+                        Log.e("Yuri", "task : ${response.body()!!.body.task}")
+                        Log.e("Yuri", "imageUrl : ${response.body()!!.body.imageUrl}")
+                        eventData[position].imageUrl = response.body()!!.body.imageUrl
+                        //dailyAdapter?.notifyDataSetChanged()
+                        eventAdapter?.notifyItemChanged(position)
+                    } else {
+                        Log.e("Yuri", "이벤트 투두 이미지 추가 여부 : sth wrong..! OMG")
+                        Log.e("Yuri", "${response.code()}")
+                        Log.e("Yuri", "${response.body()?.header?.message}")
+                    }
+                }
+                override fun onFailure(call: Call<ResponseEventTodoComplete>, t: Throwable) {
+                    Log.e("Yuri", "이벤트 투두 사진 추가 서버 연결 실패")
+                    Log.e("Yuri", t.toString())
+                }
+            })
+    }
+
+    //(api - 성공) to-do : daily to-do 이미지 삭제
+    private fun deleteDailyTodoImage(token:String, id:Int, position: Int){
+        Log.d("Yuri", "token : $token")
+        Log.d("Yuri", "id : $id")
+        RetrofitAPI.getDaily.deleteDailyTodoImage(token, id)
+            .enqueue(object:retrofit2.Callback<ResponseDailyTodoImage>{
+                override fun onResponse(
+                    call: Call<ResponseDailyTodoImage>,
+                    response: Response<ResponseDailyTodoImage>
+                ) {
+                    if (response.code() == 200) {
+                        Log.e("Yuri", "데일리 투두 사진 삭제: 서버 연결 성공")
+                        Log.e("Yuri", "message : ${response.body()!!.header.message}")
+                        dailyData[position].imageUrl = "EMPTY"
+                        //dailyAdapter?.notifyDataSetChanged()
+                        dailyAdapter?.notifyItemChanged(position)
+                    } else {
+                        Log.e("Yuri", "데일리 투두 이미지 삭제: sth wrong..! OMG")
+                        Log.e("Yuri", "${response.code()}")
+                        Log.e("Yuri", "${response.body()?.header?.message}")
+                    }
+                }
+                override fun onFailure(call: Call<ResponseDailyTodoImage>, t: Throwable) {
+                    Log.e("Yuri", "데일리 투두 사진 삭제 서버 연결 실패")
+                    Log.e("Yuri", t.toString())
+                }
+            })
+    }
+
+    //(api - 성공) to-do : event to-do 이미지 삭제
+    private fun deleteEventTodoImage(token:String, id:Int, position: Int){
+        RetrofitAPI.getEvent.deleteEventTodoImage(token, id)
+            .enqueue(object:retrofit2.Callback<ResponseDeleteEventImage>{
+                override fun onResponse(
+                    call: Call<ResponseDeleteEventImage>,
+                    response: Response<ResponseDeleteEventImage>
+                ) {
+                    if (response.code() == 200) {
+                        Log.e("Yuri", "이벤트 투두 사진 삭제: 서버 연결 성공")
+                        Log.e("Yuri", "message : ${response.body()!!.header.message}")
+                        eventData[position].imageUrl = "EMPTY"
+                        //dailyAdapter?.notifyDataSetChanged()
+                        eventAdapter?.notifyItemChanged(position)
+                    } else {
+                        Log.e("Yuri", "데일리 투두 이미지 삭제: sth wrong..! OMG")
+                        Log.e("Yuri", "${response.code()}")
+                        Log.e("Yuri", "${response.body()?.header?.message}")
+                    }
+                }
+                override fun onFailure(call: Call<ResponseDeleteEventImage>, t: Throwable) {
+                    Log.e("Yuri", "이벤트 투두 사진 삭제 서버 연결 실패")
+                    Log.e("Yuri", t.toString())
+                }
+            })
+    }
 
     //UserPermission 1
     private fun checkPermission(){

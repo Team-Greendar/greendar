@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
+    //id 'kotlin-kapt'  //kapt glide 보고 삭제 여부 판단
 }
 
 android {
@@ -48,18 +49,19 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.2'
 
-    //material-calendarview
+    //material-calendarView
     implementation 'com.prolificinteractive:material-calendarview:1.4.3'
 
     //gson, retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'  //값이 scalar 로 온다..?
 
     //recyclerView
     implementation "androidx.recyclerview:recyclerview:1.2.1"
 
-    implementation 'de.hdodenhof:circleimageview:2.2.0'  //동그라미 프로필
+    implementation 'de.hdodenhof:circleimageview:2.2.0'  //circle 프로필
     implementation 'com.google.android.material:material:1.8.0'  //edittext 커스텀
     implementation 'com.google.android.material:material:1.9.0-alpha02'  //bottom sheet navigation
 
@@ -74,9 +76,11 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
 
     //glide
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation 'com.github.bumptech.glide:glide:4.15.0'
+    implementation 'com.github.bumptech.glide:okhttp3-integration:4.6.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.15.0'
+    //kapt 'com.github.bumptech.glide:compiler:4.15.0'
+
+    //picasso
+    //implementation 'com.squareup.picasso:picasso:2.71828'
 }
-
-
-
