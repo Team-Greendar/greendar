@@ -22,6 +22,7 @@
         >
 
 
+
         <!--Arielle-->
 
         <activity
@@ -31,6 +32,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <activity
             android:name="com.example.calendar_new.FindfriendsActivity"
             android:exported="false">
@@ -64,16 +66,17 @@
 
 
 
+
         <!--//jorippong-->
-        <!--<activity android:name="com.example.greendar.ui.view.TodoActivity"
+        
+        <activity android:name="com.example.greendar.ui.view.TodoActivity"
+
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name="com.example.greendar.ui.view.RegisterActivity"/>
         <activity android:name="com.example.greendar.ui.view.RegisterPasswordActivity"/>
         <activity android:name="com.example.greendar.ui.view.LoginActivity"/>
         <activity android:name="com.example.greendar.ui.view.ChangePasswordActivity"/>
         <activity android:name="com.example.greendar.ui.view.ProfileSettingActivity"/>
-
-
 
         <activity
             android:name="com.example.greendar.ui.view.StartActivity"
@@ -83,7 +86,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+
+        </activity>
+
+
 
 
     </application>

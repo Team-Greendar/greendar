@@ -217,8 +217,10 @@ class CalendarActivity : AppCompatActivity() {
             .create(PrivateMonthRatioInterface::class.java)
         Log.d("hhh", "연결 확인 중2")
 
+
         /*토큰으로 사용자 구별해서 완료 비율을 띄우는겨*/
         val retrofitData = retrofitBuilder.getData(token = "222222" , date = month)
+
 
         retrofitData.enqueue(object : Callback<MyData?> {
             override fun onResponse(call: Call<MyData?>, response: Response<MyData?>) {
