@@ -15,9 +15,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.calendar_new.FindfriendsActivity
 import com.example.calendar_new.PrivateMonthRatioInterface
-import com.example.calendar_new.SettingsActivity
+import com.example.calendar_new.model.EventTodoRatio
 import com.example.calendar_new.model.MyData
 import com.prolificinteractive.materialcalendarview.*
 import retrofit2.Call
@@ -28,6 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
 import com.example.greendar.R
+import com.example.greendar.data.api.EventTodoRatioInterface
 
 const val BASE_URL = "http://35.216.10.67:8080"
 
@@ -36,7 +36,7 @@ class CalendarActivity : AppCompatActivity() {
 
     //[사진,텍스트 새로고침]
     lateinit var textView: TextView
-    lateinit var imageView:ImageView
+    lateinit var imageView: ImageView
     lateinit var imageButton: ImageButton
     val changeImages: IntArray = intArrayOf(
         R.drawable.cheetah,
@@ -46,7 +46,8 @@ class CalendarActivity : AppCompatActivity() {
         R.drawable.vendacycad,
         R.drawable.holly
     )
-    val ImageTitle = mutableListOf("Cheetah","GiantOtter","PolarBear","Staghorn","Venda Cycad","Holly")
+    val ImageTitle =
+        mutableListOf("Cheetah", "GiantOtter", "PolarBear", "Staghorn", "Venda Cycad", "Holly")
     val ImageG2 = mutableListOf(
         "Algeria, Angola(Savana)",
         "Amazon(Forest, Marine Neritic)",
@@ -54,7 +55,7 @@ class CalendarActivity : AppCompatActivity() {
         "Anguilla(Marine Neritic)",
         "SouthAfrica(Savana)",
         "Albania(Forest, Shrub land)"
-        )
+    )
 
 
     @SuppressLint("MissingInflatedId")
@@ -70,11 +71,11 @@ class CalendarActivity : AppCompatActivity() {
 
         var index = 0
 
-        imageButton.setOnClickListener{
+        imageButton.setOnClickListener {
             imageView.setImageResource(changeImages[index])
             titletextView.text = ImageTitle[index]
             rangetextView.text = ImageG2[index]
-            index = (index +1) % changeImages.size
+            index = (index + 1) % changeImages.size
         }
 
 
@@ -82,14 +83,14 @@ class CalendarActivity : AppCompatActivity() {
         val calendarView: MaterialCalendarView = findViewById(R.id.calendarview)
         val selectedDateTextView: TextView = findViewById(R.id.day_text)
         val selectedMonthTextView: TextView = findViewById(R.id.month_text)
+        val selectedEventMonthTextView : TextView = findViewById(R.id.eventTODO_month_text)
 
         //[API] token, date 변수 선언
-        var month:String ="1"
+        var month: String = "1"
         var date: String = "1"
 
         //외부 사이크 링크 연결 변수선언
         val redlist_click_btn: ImageButton = findViewById(R.id.redlist_click_btn)
-
 
 
         /*Run Affect X
@@ -103,26 +104,27 @@ class CalendarActivity : AppCompatActivity() {
         selectedMonthTextView.text = currentMonth*/
 
 
-
         //[캘린더] 2. 텍스트뷰에 불러오기(Date/일자별) : set up the DATE changed listener to update the selected month text view
         //[Bar 아이콘 넣기] 1. DayViewDecorator 인터페이스 사용해서 선택된 날짜에 아이콘 추가하기
         //[그냥 아이콘만 찍힘]
-            class SpecialDayDecorator(context: Context) : DayViewDecorator {
+        class SpecialDayDecorator(context: Context) : DayViewDecorator {
             private val drawable = ContextCompat.getDrawable(context, R.drawable.ic_leaf)!!
             private var specialDate: CalendarDay? = null
 
-            fun setSpecialDate(date:CalendarDay){
+            fun setSpecialDate(date: CalendarDay) {
                 specialDate = date
             }
+
             //[Bar 아이콘 넣기] shouldDecorate() : 날짜에 아이콘 넣기 ★조건★ 결정 : True/False 반환
             override fun shouldDecorate(day: CalendarDay?): Boolean {
                 return day == specialDate
-                return day == specialDate
             }
+
             override fun decorate(view: DayViewFacade?) {
                 view?.setSelectionDrawable(drawable)
             }
         }
+
         val selectedDateDecorator = SpecialDayDecorator(this)
         calendarView.addDecorator(selectedDateDecorator)
 
@@ -155,20 +157,26 @@ class CalendarActivity : AppCompatActivity() {
                 val formattedDate =
                     SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date?.date)
                 selectedDateTextView.text = formattedDate
+                month=formattedDate.toString()
+                getEventTodoRatio(month)
 
             }
         })
 
 
-        //[캘린더] 2. 텍스트뷰에 불러오기(Month): set up the MONTH changed listener to update the selected month text view
+        //[캘린더_Private] 2. 텍스트뷰에 불러오기(Month): set up the MONTH changed listener to update the selected month text view
         calendarView.setOnMonthChangedListener { widget, date ->
             val formattedMonth =
                 SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date?.date)
             selectedMonthTextView.text = formattedMonth
-            month=formattedMonth.toString()
+            month = formattedMonth.toString()
             getMyData(month)
 
+
+            /*여기다가 Event 월별 Ratio도 불러오면 되는건가?*/
         }
+
+
         //[링크] 캘린더 하단 ICUN 링크 연결
         redlist_click_btn.setOnClickListener {
             val openURL = Intent(Intent.ACTION_VIEW)
@@ -185,6 +193,7 @@ class CalendarActivity : AppCompatActivity() {
         inflater.inflate(R.menu.option_menu, menu)
         return true
     }
+
     //[옵션메뉴] 클릭 시 해당 페이지로 이동
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -208,58 +217,99 @@ class CalendarActivity : AppCompatActivity() {
     }
 
 
-    //[API] @Get PrivateMonthRatioInterface 연결
-    private fun getMyData(month:String){
+    //[API] @Get Private MonthRatioInterface 연결
+    private fun getMyData(month: String) {
         val retrofitBuilder = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(BASE_URL)
             .build()
             .create(PrivateMonthRatioInterface::class.java)
-        Log.d("hhh", "연결 확인 중2")
+        /*Log.d("hhh", "연결 확인 중2")*/
 
 
         /*토큰으로 사용자 구별해서 완료 비율을 띄우는겨*/
-        val retrofitData = retrofitBuilder.getData(token = "222222" , date = month)
+        val retrofitData = retrofitBuilder.getData(token = "222222", date = month)
 
 
         retrofitData.enqueue(object : Callback<MyData?> {
             override fun onResponse(call: Call<MyData?>, response: Response<MyData?>) {
-                Log.d("hhh", "연결 확인 중3")
-                Log.d("hhh", "${response.code()}")
+                /*Log.d("hhh", "연결 확인 중3")
+                Log.d("hhh", "${response.code()}")*/
 
 
-                if(response.isSuccessful){
+                if (response.isSuccessful) {
                     //ratio만 리스트(bodyList 변수로 선언)로 받아오려고 추가한 변수들
                     val myData = response.body()
                     val bodyList = myData?.body
                     val ratioList = bodyList?.map { it.ratio }
                     val ratioSum = ratioList?.sum()
 
-                   /* //ratioSum을 Bar 형태로 나타내기
+                    /* //ratioSum을 Bar 형태로 나타내기
                     val progressBar : ProgressBar = findViewById(R.id.progress_bar)
                     progressBar.progress = (ratioSum?: 0) as Int
                     progressBar.max = 100*/
 
                     /*val result : String = "PRIVATE TO-DO COMPLETION RATE is ${ratioSum ?: 0}%"*/
-                    val result : String = "PRIVATE TO-DO COMPLETION RATE is ${ratioSum}%"
+                    val result: String = "PRIVATE TO-DO COMPLETION RATE is ${ratioSum}%"
                     val selectedMonthTextView: TextView = findViewById(R.id.month_text)
                     selectedMonthTextView.text = result.toString()
-                    Log.d("hhh", "연결 확인 중4")
-                }else{
-                    Log.d("hhh", "연결 실패")
+                    /* Log.d("hhh", "연결 확인 중4")*/
+                } else {
+                    /* Log.d("hhh", "연결 실패")*/
                 }
-
             }
 
             override fun onFailure(call: Call<MyData?>, t: Throwable) {
                 Toast.makeText(this@CalendarActivity, "서버 로직 에러", Toast.LENGTH_LONG).show()
-                Log.d("hhh", "서버 로직 에러")
+                /*Log.d("hhh", "서버 로직 에러")*/
             }
         })
 
 
     }
 
+    //[API] @Get Event MonthRatioInterface 연결
+    private fun getEventTodoRatio(month: String) {
+        val retrofitBuilder = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(BASE_URL)
+            .build()
+            .create(EventTodoRatioInterface::class.java)
+        Log.d("hhh", "연결 확인 중2")
+
+        /*토큰으로 사용자 구별해서 완료 비율을 띄우는겨*/
+        val retrofitData = retrofitBuilder.getData(token = "222222", date = month)
+
+        retrofitData.enqueue(object : Callback<EventTodoRatio?> {
+            override fun onResponse(
+                call: Call<EventTodoRatio?>, response: Response<EventTodoRatio?>
+            ) {
+                Log.d("hhh", "연결 확인 중3")
+                Log.d("hhh", "${response.code()}")
+
+                if (response.isSuccessful) {
+                    //ratio만 리스트(bodyList 변수로 선언)로 받아오려고 추가한 변수들
+                    val EventTodoRatio = response.body()
+                    val bodyList = EventTodoRatio?.body
+                    val ratioList = bodyList?.map { it.ratio }
+                    val ratioSum = ratioList?.sum()
+
+                    val result: String = "EVENT TO-DO COMPLETION RATE is ${ratioSum}%"
+                    val selectedEventMonthTextView: TextView = findViewById(R.id.eventTODO_month_text)
+                    selectedEventMonthTextView.text = result.toString()
+                    Log.d("hhh", "연결 확인 중4")
+                } else {
+                    Log.d("hhh", "연결 실패")
+                }
+            }
+
+            override fun onFailure(call: Call<EventTodoRatio?>, t: Throwable) {
+                Toast.makeText(this@CalendarActivity, "서버 로직 에러", Toast.LENGTH_LONG).show()
+                Log.d("hhh", "서버 로직 에러")
+            }
+        })
+
+    }
 }
 
 
