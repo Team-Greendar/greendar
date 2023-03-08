@@ -14,28 +14,20 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.greendar.R
-
 import com.example.greendar.data.api.PrivateMonthRatioInterface
 import com.example.greendar.data.model.MyData
-
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
-
-
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-
 //import com.example.calendar_new.FindfriendsActivity
 //import com.example.calendar_new.SettingsActivity
-
-
 import com.prolificinteractive.materialcalendarview.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
