@@ -1,6 +1,6 @@
-package com.example.calendar_new
+package com.example.greendar.data.api
 
-import com.example.calendar_new.model.MyData
+import com.example.greendar.data.model.MyData
 import retrofit2.Call
 import retrofit2.http.*
 
