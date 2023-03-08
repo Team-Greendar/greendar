@@ -46,10 +46,6 @@
                 android:value="" />
         </activity>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> d607ea487ca9685056cde6ccc1853814ec262be0
         <activity
             android:name="com.example.greendar.ui.view.CalendarActivity"
             android:exported="true">
