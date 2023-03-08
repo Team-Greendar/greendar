@@ -9,3 +9,11 @@ data class DailyTodo(
     var task:String,
     var modifyClicked:Boolean
 )
+
+data class EventTodo(
+    var complete:Boolean,
+    var date:String,
+    var imageUrl:String,
+    var event_todo_id:Int,
+    var task:String
+)

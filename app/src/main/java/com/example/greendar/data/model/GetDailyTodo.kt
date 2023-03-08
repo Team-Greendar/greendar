@@ -25,6 +25,15 @@ data class ResponseDailyNewTodo(
     val header: Header
 )
 
+data class ResponseDeleteDailyTodo(
+    val header:Header,
+    val body:Boolean?
+)
+
+data class ResponseDailyTodoImage(
+    val header:Header,
+    val body:Boolean
+)
 data class Head(
     val code: Int,
     val message: String
