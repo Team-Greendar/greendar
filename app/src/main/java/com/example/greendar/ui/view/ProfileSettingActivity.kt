@@ -100,7 +100,7 @@ class ProfileSettingActivity:AppCompatActivity() {
             val username = binding.textInputEditTextUsername.text.toString()
             val message = binding.textInputEditTextStatusMessage.text.toString()
 
-            /*//구글 회원 가입
+            //구글 회원 가입
             if (intent.getStringExtra("provider") == "com.google") {
                 val googleEmail = intent.getStringExtra("googleEmail").toString()
                 val googlePassword = intent.getStringExtra("googlePassword").toString()
@@ -115,7 +115,8 @@ class ProfileSettingActivity:AppCompatActivity() {
                     message
                 )
                 Log.d("Yuri", "imageUrl : $fileAddress, message: $message")
-                postUserInfo(postRegister)
+                //todo
+                postUserInfo(postRegister, googleUid)
             }
             //일반 회원 가입
             else {
@@ -126,8 +127,8 @@ class ProfileSettingActivity:AppCompatActivity() {
                 val postRegister =
                     PostRegisterUser(email, uid, username, password, fileAddress, message)
                 Log.d("Yuri", "imageUrl : $fileAddress, message: $message")
-                postUserInfo(postRegister)
-            }*/
+                postUserInfo(postRegister, uid)
+            }
         }
     }
 
@@ -166,7 +167,7 @@ class ProfileSettingActivity:AppCompatActivity() {
     }
 
     //API
-    private fun postUserInfo(postRegister:PostRegisterUser){
+    private fun postUserInfo(postRegister:PostRegisterUser, token:String){
         RetrofitAPI.post.postRegisterUser(postRegister)
             .enqueue(object:retrofit2.Callback<ResponseRegisterUser>{
                 override fun onResponse(
@@ -176,8 +177,12 @@ class ProfileSettingActivity:AppCompatActivity() {
                     if(response.body()?.header?.status == 200){
                         if(response.body()?.header?.message == "SUCCESS"){
                             Log.e("Yuri", "로그인 성공")
+                            //todo 다음 으로 넘어감
                             Toast.makeText(this@ProfileSettingActivity, "회원가입 성공. 다음으로 넘어감", Toast.LENGTH_SHORT).show()
-                            //TODO 다음 으로 넘어감
+
+                            val intent = Intent(this@ProfileSettingActivity, CalendarActivity::class.java)
+                            intent.putExtra("token", token)
+                            startActivity(intent)
                         }
                         else{
                             Log.e("Yuri", "이미 존재하는 닉네임이다")
@@ -207,20 +212,6 @@ class ProfileSettingActivity:AppCompatActivity() {
         cursor.close()
         return url
     }
-
-    /*private fun getRealPathFromURI(contentURI: Uri): String? {
-        val result: String?
-        val cursor = contentResolver.query(contentURI, null, null, null, null)
-        if (cursor == null) { // Source is Dropbox or other similar local file path
-            result = contentURI.path
-        } else {
-            cursor.moveToFirst()
-            val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
-            result = cursor.getString(idx)
-            cursor.close()
-        }
-        return result
-    }*/
 
 
     private fun init(){

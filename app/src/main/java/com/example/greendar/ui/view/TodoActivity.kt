@@ -8,15 +8,16 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.loader.content.CursorLoader
@@ -24,6 +25,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.greendar.R
@@ -37,7 +40,6 @@ import com.example.greendar.data.recycler.UserInfo.date
 import com.example.greendar.data.recycler.UserInfo.token
 import com.example.greendar.data.recycler.UserInfo.username
 import com.example.greendar.databinding.ActivityTodoBinding
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -48,12 +50,13 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 
+//todo : 툴바 확인, 키보드 바로 올라 오게 하기
 class TodoActivity: AppCompatActivity() {
     private lateinit var binding: ActivityTodoBinding
 
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private var filePath = ""
-    var publicPosition = 0
+    private var publicPosition = 0
     private var whichTodo = 0
 
     //recyclerView 가 불러올 목록
@@ -76,14 +79,16 @@ class TodoActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
 
         binding = ActivityTodoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //여기서 오류 생김
-        //supportActionBar?.setDisplayShowTitleEnabled(true)
-        //supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.title = ""
+
+        //todo 값 받아오기
 
 
         //daily to-do 정보 불러옴
@@ -112,7 +117,51 @@ class TodoActivity: AppCompatActivity() {
 
 
 
-        //val path = "https://storage.cloud.google.com/greendar_storage/test/Screenshot_20230222-182438_Greendar.jpg-q0l5Td.jpg"
+        var path = "https://storage.cloud.google.com/greendar_storage/test/Screenshot_20230222-182438_Greendar.jpg-q0l5Td.jpg"
+        path = "https://storage.googleapis.com/greendar_storage/test/20230204_222413.jpg-0K7aWe.jpg" //ok
+        //path ="https://storage.cloud.google.com/greendar_storage/test/20230204_222413.jpg-0K7aWe.jpg"
+
+        Glide.with(binding.textImage).load(path)
+            .listener(object:RequestListener<Drawable>{
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    Log.e("Yuri", "fail : ${e.toString()}")
+                    return false
+                }
+            })
+            .error(R.drawable.add_friends)
+            .timeout(6000)
+            .transform(CenterCrop(), RoundedCorners(5))
+            .into(binding.textImage)
+
+        //.load(member.imageUrl)
+        //.diskCacheStrategy(DiskCacheStrategy.NONE)
+        //.skipMemoryCache(true)
+
+        /*val picasso = Picasso.Builder(this)
+            .listener { _, _, e ->
+                Log.e("Yuri", e.toString())
+                e.printStackTrace() }
+            .build()
+
+        picasso
+            .load(path)
+            .memoryPolicy(MemoryPolicy.NO_CACHE)
+            .error(R.drawable.add_friends)
+            .into(binding.textImage)*/
 
     }
 
@@ -354,7 +403,7 @@ class TodoActivity: AppCompatActivity() {
         }
 
         //TO-DO 3 : 이미지 추가, 삭제
-        //TO-DO : 이미지 선택 후, 이미지 uri를 dailydata리스트에 저장, dailyadapter?.notifyDataSetChanged() 추가.
+        //TO-DO : 이미지 선택 후, 이미지 uri 를 dailyData 리스트 에 저장, dailyAdapter?.notifyDataSetChanged() 추가.
         image?.setOnClickListener {
             bottomSheetDialog.dismiss()
             publicPosition = position
@@ -422,7 +471,7 @@ class TodoActivity: AppCompatActivity() {
         val requestBody = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         val body = MultipartBody.Part.createFormData("file", file.name, requestBody)
 
-        //todo : 데일리 or 이벤트 어케 구분 하냐... (변수로 구분)
+        //데일리 or 이벤트 어케 구분 하냐... (변수로 구분)
         when(whichTodo){
             1 -> {
                 //이벤트 투두
@@ -643,16 +692,24 @@ class TodoActivity: AppCompatActivity() {
         }
     }
 
-    /*
+    //todo : keyboard
+    fun keyboardDown(view:View){
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    //appBar goBack
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item?.itemId) {
+        when (item.itemId) {
             android.R.id.home -> {
                 //뒤로 가기 버튼 눌렀을 때
                 //return 은 boolean 으로
-                return false
+                finish()
+                return true
             }
+            else->{}
         }
-        return false  //이거는 임시로 작성한 코드
+        return super.onOptionsItemSelected(item)
     }
-    */
+
 }
