@@ -5,19 +5,20 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Html.fromHtml
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.calendar_new.PrivateMonthRatioInterface
 import com.example.calendar_new.model.EventTodoRatio
 import com.example.calendar_new.model.MyData
+import com.example.greendar.R
+import com.example.greendar.data.api.EventTodoRatioInterface
+import com.example.greendar.data.recycler.UserInfo.token
 import com.prolificinteractive.materialcalendarview.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,8 +27,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
-import com.example.greendar.R
-import com.example.greendar.data.api.EventTodoRatioInterface
 
 const val BASE_URL = "http://35.216.10.67:8080"
 
@@ -87,7 +86,7 @@ class CalendarActivity : AppCompatActivity() {
 
         //[API] token, date 변수 선언
         var month: String = "1"
-        var date: String = "1"
+        var token : String? = intent.getStringExtra("token")
 
         //외부 사이크 링크 연결 변수선언
         val redlist_click_btn: ImageButton = findViewById(R.id.redlist_click_btn)
@@ -147,22 +146,20 @@ class CalendarActivity : AppCompatActivity() {
         })*/
 
 
-        //[원래 했던 것 : 그냥 날짜 클릭 시 하단 텍스트 뷰에 해당 날짜 띄우는 형태]
-        calendarView.setOnDateChangedListener(object : OnDateSelectedListener {
-            override fun onDateSelected(
-                widget: MaterialCalendarView,
-                date: CalendarDay,
-                selected: Boolean
-            ) {
-                val formattedDate =
-                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date?.date)
-                selectedDateTextView.text = formattedDate
-                month=formattedDate.toString()
-                getEventTodoRatio(month)
+        //[캘린더] 2. 텍스트뷰에 불러오기(Date/일자별)
+        calendarView.setOnDateChangedListener { widget, date, selected ->
+            //[캘린더] 2. 텍스트뷰에 불러오기(Date/일자별)
+            val formattedDate =
+                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date?.date)
+            selectedDateTextView.text = formattedDate
+            getEventTodoRatio(month)
 
-            }
-        })
-
+            //[TodoActivity 데이터 전송] : Intent로 연결
+            val intent = Intent(this, TodoActivity::class.java)
+            intent.putExtra("selected_date", formattedDate) //selected date가 캘린더에서 TodoActivity로 보내는 데이터 이름이야!
+            Log.d("hhh", formattedDate.toString())
+            startActivity(intent)
+        }
 
         //[캘린더_Private] 2. 텍스트뷰에 불러오기(Month): set up the MONTH changed listener to update the selected month text view
         calendarView.setOnMonthChangedListener { widget, date ->
@@ -171,11 +168,8 @@ class CalendarActivity : AppCompatActivity() {
             selectedMonthTextView.text = formattedMonth
             month = formattedMonth.toString()
             getMyData(month)
-
-
-            /*여기다가 Event 월별 Ratio도 불러오면 되는건가?*/
+            getEventTodoRatio(month)
         }
-
 
         //[링크] 캘린더 하단 ICUN 링크 연결
         redlist_click_btn.setOnClickListener {
@@ -228,7 +222,7 @@ class CalendarActivity : AppCompatActivity() {
 
 
         /*토큰으로 사용자 구별해서 완료 비율을 띄우는겨*/
-        val retrofitData = retrofitBuilder.getData(token = "222222", date = month)
+        val retrofitData = retrofitBuilder.getData(token = token, date = month)
 
 
         retrofitData.enqueue(object : Callback<MyData?> {
@@ -244,15 +238,15 @@ class CalendarActivity : AppCompatActivity() {
                     val ratioList = bodyList?.map { it.ratio }
                     val ratioSum = ratioList?.sum()
 
-                    /* //ratioSum을 Bar 형태로 나타내기
+                     /*//ratioSum을 Bar 형태로 나타내기
                     val progressBar : ProgressBar = findViewById(R.id.progress_bar)
                     progressBar.progress = (ratioSum?: 0) as Int
-                    progressBar.max = 100*/
+                    progressBar.max = 100
 
-                    /*val result : String = "PRIVATE TO-DO COMPLETION RATE is ${ratioSum ?: 0}%"*/
-                    val result: String = "PRIVATE TO-DO COMPLETION RATE is ${ratioSum}%"
+                    val result : String = "PRIVATE TO-DO COMPLETION RATE is ${ratioSum ?: 0}%"*/
+                    val result: String = "<font color='#6B9AC4'><strong>PRIVATE TO-DO</strong></font> COMPLETION RATE is <font color='blue'><strong>${ratioSum}</strong></font>%"
                     val selectedMonthTextView: TextView = findViewById(R.id.month_text)
-                    selectedMonthTextView.text = result.toString()
+                    selectedMonthTextView.text = fromHtml(result)
                     /* Log.d("hhh", "연결 확인 중4")*/
                 } else {
                     /* Log.d("hhh", "연결 실패")*/
@@ -264,7 +258,6 @@ class CalendarActivity : AppCompatActivity() {
                 /*Log.d("hhh", "서버 로직 에러")*/
             }
         })
-
 
     }
 
@@ -303,6 +296,7 @@ class CalendarActivity : AppCompatActivity() {
                 }
             }
 
+
             override fun onFailure(call: Call<EventTodoRatio?>, t: Throwable) {
                 Toast.makeText(this@CalendarActivity, "서버 로직 에러", Toast.LENGTH_LONG).show()
                 Log.d("hhh", "서버 로직 에러")
@@ -311,6 +305,8 @@ class CalendarActivity : AppCompatActivity() {
 
     }
 }
+
+
 
 
 

@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="13dp"
             android:paddingLeft="20dp"
-            android:text="Account"
+            android:text="Profile"
             android:layout_toRightOf="@+id/accountImage"
             android:textColor="#000000"
             android:textSize="13sp"/>
