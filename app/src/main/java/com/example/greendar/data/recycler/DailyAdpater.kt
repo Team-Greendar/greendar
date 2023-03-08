@@ -1,6 +1,7 @@
 package com.example.greendar.data.recycler
 
 import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -10,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
@@ -114,6 +117,9 @@ class DailyAdapter(val view: Context):RecyclerView.Adapter<DailyAdapter.Holder>(
                 binding.etTodo.setSelection(member.task.length)
                 binding.etTodo.requestFocus()
 
+                //todo
+                //todoActivity?.keyboardDown(binding.etTodo)
+
                 binding.etTodo.setOnEditorActionListener { _, actionId, event ->
                     Log.d("Yuri", "키보드 접근")
                     Log.d("Yuri", "pressed key : $actionId")
@@ -169,7 +175,7 @@ class DailyAdapter(val view: Context):RecyclerView.Adapter<DailyAdapter.Holder>(
                 //todo : http 이미지 를 못 불러 온다...
                 if(member.imageUrl != "EMPTY"){
                     Log.d("Yuri", "link : ${member.imageUrl}")
-                    Glide.with(binding.ivPhoto)
+                    Glide.with(binding.ivPhoto.context)
                         //.load(member.imageUrl)
                         .load(path)
                         .listener(object:RequestListener<Drawable>{

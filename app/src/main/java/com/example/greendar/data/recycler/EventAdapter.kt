@@ -88,9 +88,22 @@ class EventAdapter:RecyclerView.Adapter<EventAdapter.Holder>() {
             if (mMember!!.imageUrl == "EMPTY") {
                 binding.ivPhoto.isEnabled = false
                 binding.ivPhoto.setImageResource(R.drawable.iv_invisible_box)
+                Glide.with(binding.ivPhoto).clear(binding.ivPhoto)
             } else {
                 binding.ivPhoto.isEnabled = true
-                val path = "https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=1200&q=60"
+                var path = "https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=1200&q=60"
+                path = "https://storage.cloud.google.com/greendar_storage/test/Screenshot_20230222-182438_Greendar.jpg-q0l5Td.jpg"
+
+                //todo 2 : https reference 오류
+                //val storage = FirebaseStorage.getInstance()  -> 이거 dependencies 뭐지
+                //val httpsReference = storage.getReferenceFromUrl("https 주소")
+
+                /*Glide.with(context)
+                    .load(httpsReference)
+                    .placeholder(R.drawable.logo)
+                    .dontAnimate()
+                    .into(holder.horseImage)
+                * */
 
                 //todo : http 이미지 를 못 불러 온다...
                 if (member.imageUrl != "EMPTY") {
@@ -125,10 +138,6 @@ class EventAdapter:RecyclerView.Adapter<EventAdapter.Holder>() {
                 }
             }
         }
-
-
-
-
 
         /* ========= API 연결 함수 작성 ========= */
         //(api- 성공) to-do : check 여부 수정
