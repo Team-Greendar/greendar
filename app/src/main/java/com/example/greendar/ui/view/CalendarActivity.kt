@@ -10,17 +10,15 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-<<<<<<< HEAD
+
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import com.example.calendar_new.PrivateMonthRatioInterface
-import com.example.calendar_new.model.EventTodoRatio
-import com.example.calendar_new.model.MyData
-import com.example.greendar.R
+//import com.example.calendar_new.PrivateMonthRatioInterface
+//import com.example.calendar_new.model.EventTodoRatio
+//import com.example.calendar_new.model.MyData
+
 import com.example.greendar.data.api.EventTodoRatioInterface
 import com.example.greendar.data.recycler.UserInfo.token
-=======
+
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -34,15 +32,12 @@ import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 
-
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 
 //import com.example.calendar_new.FindfriendsActivity
 //import com.example.calendar_new.SettingsActivity
 
-
->>>>>>> d607ea487ca9685056cde6ccc1853814ec262be0
 import com.prolificinteractive.materialcalendarview.*
 import retrofit2.Call
 import retrofit2.Callback
