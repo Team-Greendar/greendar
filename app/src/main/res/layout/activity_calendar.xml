@@ -30,7 +30,7 @@
 
 
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-        android:id="@+id/calendarview"
+        android:id="@+id/calendarView"
         android:layout_width="500dp"
         android:layout_height="400dp"
         android:layout_alignParentStart="true"
@@ -47,7 +47,7 @@
         android:layout_marginStart="-5dp"
         android:layout_marginTop="450dp"
         android:gravity="center"
-        android:text="날짜를 입력하시오" />
+        android:text="Today's YY-MM-DD" />
 
     <TextView
         android:id="@+id/month_text"
@@ -57,7 +57,17 @@
         android:layout_marginStart="-5dp"
         android:layout_marginTop="470dp"
         android:gravity="center"
-        android:text="날짜를 입력하시오" />
+        android:text="Private To-Do Completion Rate" />
+
+    <TextView
+        android:id="@+id/eventTODO_month_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="-5dp"
+        android:layout_marginTop="490dp"
+        android:gravity="center"
+        android:text="Event To-Do Completion Rate" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -185,4 +195,3 @@
 
 
 </RelativeLayout>
-
