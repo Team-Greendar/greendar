@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.text.Html.fromHtml
 import android.text.style.LineBackgroundSpan
 import android.util.Log
 import android.view.Menu
@@ -23,7 +24,10 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.greendar.data.api.EventTodoRatioInterface
+import com.example.greendar.data.recycler.UserInfo
+import com.example.greendar.data.recycler.UserInfo.token
 import com.example.greendar.model.EventTodoRatio
+
 import com.example.greendar.model.MyData
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
@@ -88,7 +92,7 @@ class CalendarActivity : AppCompatActivity() {
 
         //[캘린더] 1. 변수선언 및 특정 날짜(2023-3-10)에 도트 찍기
         val calendarView: MaterialCalendarView = findViewById(R.id.calendarView)
-        Log.d("hhh","dot check1")
+        /*Log.d("hhh","dot check1")
         val date : CalendarDay = CalendarDay.from(2023,3,13)
         Log.d("hhh","dot check2")
         val dot : Drawable? = ContextCompat.getDrawable(this,R.drawable.dot)
@@ -97,6 +101,7 @@ class CalendarActivity : AppCompatActivity() {
             override fun shouldDecorate(day: CalendarDay): Boolean {
                 return day == date // date에 지정한 날짜에만 도트 찍기 True로 반환
             }
+
             override fun decorate(view: DayViewFacade) {
                 val dotSize = 10 // 점의 크기
                 val dotColor = Color.BLUE// 점의 색상
@@ -108,11 +113,9 @@ class CalendarActivity : AppCompatActivity() {
         val decorator = DotDecorator(dot!!, date)
         calendarView.addDecorator(decorator)
         Log.d("hhh","dot check4")
-
+*/
         //[캘린더] 1. 변수선언
         val selectedDateTextView: TextView = findViewById(R.id.day_text)
-        val selectedMonthTextView: TextView = findViewById(R.id.month_text)
-        val selectedEventMonthTextView : TextView = findViewById(R.id.eventTODO_month_text)
 
         //[API] token, date 변수 선언
         var month: String
@@ -125,12 +128,14 @@ class CalendarActivity : AppCompatActivity() {
         calendarView.setOnDateChangedListener { _, date, _ ->
             val formattedDate =
                 SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date.date)
-            selectedDateTextView.text = formattedDate
+
             formattedDate.toString()
 
             //날짜 클릭 시 해당 TodoActivity 페이지로 전환 , formattedDate 데이터 전달
             val intent = Intent(this@CalendarActivity, TodoActivity::class.java)
-            intent.putExtra("selectedDate", formattedDate)
+            //intent.putExtra("selectedDate", formattedDate)
+            //todo
+            UserInfo.date = formattedDate
             Log.d("hhh", formattedDate.toString()) // 클릭 날짜 잘 넘어감 확인
             startActivity(intent)
         }
@@ -140,11 +145,12 @@ class CalendarActivity : AppCompatActivity() {
         calendarView.setOnMonthChangedListener { _, date ->
             val formattedMonth =
                 SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date?.date!!)
-            selectedMonthTextView.text = formattedMonth
-            selectedEventMonthTextView.text=formattedMonth
+            //selectedMonthTextView.text = formattedMonth
+            //selectedEventMonthTextView.text=formattedMonth
+            selectedDateTextView.text = formattedMonth.substring(0, 7)
             month=formattedMonth.toString()
-            getMyData(month) //API
-            getEventTodoRatio(month)//API
+            getMyData(month) //API Daily
+            getEventTodoRatio(month)//API Eco
 
         }
 
@@ -197,8 +203,8 @@ class CalendarActivity : AppCompatActivity() {
 
 
         //ProfileSetting 183 Token Receive
-        val token : String? = intent.getStringExtra("token")
-        val retrofitData = retrofitBuilder.getData(token = token.toString(), date = month)
+        //val token : String? = intent.getStringExtra("token")
+        val retrofitData = retrofitBuilder.getData(token = token, date = month)
         Log.d("hhh", "Private Token : $token")
 
 
@@ -215,9 +221,9 @@ class CalendarActivity : AppCompatActivity() {
                     val ratioList = bodyList?.map { it.ratio }
                     val ratioSum = ratioList?.sum()
 
-                    val result = "PRIVATE TO-DO COMPLETION RATE is ${ratioSum}%"
-                    val selectedMonthTextView: TextView = findViewById(R.id.month_text)
-                    selectedMonthTextView.text = result
+                    val result: String = "<font color='#F4B942'><strong>ECO TO-DO</strong></font> COMPLETION RATE is <font color='#F4B942'><strong>${ratioSum}</strong></font>%"
+                    val selectedMonthTextView: TextView = findViewById(R.id.eventTODO_month_text)
+                    selectedMonthTextView.text = fromHtml(result)
                     Log.d("hhh", "Private 연결 확인 중3")
                 }else{
                     Log.d("hhh", "연결 실패")
@@ -245,8 +251,9 @@ class CalendarActivity : AppCompatActivity() {
 
 
         //ProfileSetting 183 Token Receive
-        val token : String? = intent.getStringExtra("token")
-        val retrofitData = retrofitBuilder.getData(token = token.toString() , date = month)
+        //todo
+        //val token : String? = intent.getStringExtra("token")
+        val retrofitData = retrofitBuilder.getData(token = token , date = month)
         Log.d("hhh", "Event Token : $token")
 
 
@@ -263,10 +270,13 @@ class CalendarActivity : AppCompatActivity() {
                     val ratioList = bodyList?.map { it.ratio }
                     val ratioSum = ratioList?.sum()
 
-                    val result = "EVENT TO-DO COMPLETION RATE is ${ratioSum}%"
-                    val selectedEventMonthTextView: TextView = findViewById(R.id.month_text)
+                    val result: String = "<font color='#6B9AC4'><strong>DAILY TO-DO</strong></font> COMPLETION RATE is <font color='#6B9AC4'><strong>${ratioSum}</strong></font>%"
+                    val selectedMonthTextView: TextView = findViewById(R.id.month_text)
+                    selectedMonthTextView.text = fromHtml(result)
+                    /*val result = "Eco TO-DO COMPLETION RATE is ${ratioSum}%"
+                    val selectedEventMonthTextView: TextView = findViewById(R.id.eventTODO_month_text)
                     selectedEventMonthTextView.text = result
-                    Log.d("hhh", "Event 연결 확인 중3")
+                    */Log.d("hhh", "Event 연결 확인 중3")
                 }else{
                     Log.d("hhh", "연결 실패")
                 }

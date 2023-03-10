@@ -170,9 +170,9 @@ class ProfileSettingActivity:AppCompatActivity() {
 
                             //다음 으로 넘어감
                             Log.e("Yuri", "move to Calendar")
-                            Log.e("Yuri", "token : $token")
+                            //Log.e("Yuri", "token : $token")
                             val intent = Intent(this@ProfileSettingActivity, CalendarActivity::class.java)
-                            intent.putExtra("token", token)
+                            //intent.putExtra("token", token)
                             startActivity(intent)
                         }
                         else{

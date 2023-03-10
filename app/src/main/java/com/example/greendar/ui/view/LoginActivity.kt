@@ -132,7 +132,6 @@ class LoginActivity:AppCompatActivity() {
                         //todo : 토큰으로 보낼지, 변수로 저장할지.. (만나서 고민)
                         token = userToken
                         Log.d("Yuri", "log in success")
-
                         startActivity(Intent(this@LoginActivity, CalendarActivity::class.java))
 
                     }else if((response.body()?.header?.status == 500)){

@@ -55,9 +55,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_marginStart="-5dp"
-        android:layout_marginTop="470dp"
+        android:layout_marginTop="490dp"
         android:gravity="center"
-        android:text="Private To-Do Completion Rate" />
+        android:text="Daily To-Do Completion Rate" />
 
     <TextView
         android:id="@+id/eventTODO_month_text"
@@ -65,9 +65,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_marginStart="-5dp"
-        android:layout_marginTop="490dp"
+        android:layout_marginTop="470dp"
         android:gravity="center"
-        android:text="Event To-Do Completion Rate" />
+        android:text="Eco To-Do Completion Rate" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -112,13 +112,7 @@
         android:backgroundTint="#00000000"
         app:srcCompat="@drawable/redlist_site_click_button" />
 
-    <View
-        android:layout_width="380dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="680dp"
-        android:layout_marginEnd="110dp"
-        android:background="#FF0B0B" />
+
 
     <ImageView
         android:layout_width="20dp"
@@ -192,6 +186,15 @@
         android:textColor="@color/white"
         android:textSize="13dp"
         android:textStyle="bold" />
+
+    <View
+        android:layout_width="380dp"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="110dp"
+        android:layout_marginBottom="40dp"
+        android:background="#FF0B0B" />
 
 
 </RelativeLayout>
