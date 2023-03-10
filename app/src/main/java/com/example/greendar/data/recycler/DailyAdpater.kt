@@ -1,7 +1,5 @@
 package com.example.greendar.data.recycler
 
-import android.content.Context
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -11,8 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
@@ -29,6 +25,7 @@ import com.example.greendar.data.model.PutDailyTodoChanged
 import com.example.greendar.data.model.PutDailyTodoTaskModify
 import com.example.greendar.data.model.ResponseDailyNewTodo
 import com.example.greendar.data.recycler.UserInfo.date
+import com.example.greendar.data.recycler.UserInfo.default_Address
 import com.example.greendar.data.recycler.UserInfo.token
 import com.example.greendar.databinding.ItemTodoListBinding
 import com.example.greendar.ui.view.TodoActivity
@@ -37,7 +34,7 @@ import retrofit2.Response
 
 
 //RecyclerView 의 Adapter
-class DailyAdapter(val view: Context):RecyclerView.Adapter<DailyAdapter.Holder>() {
+class DailyAdapter:RecyclerView.Adapter<DailyAdapter.Holder>() {
 
     var listData = mutableListOf<DailyTodo>()
 
@@ -56,8 +53,6 @@ class DailyAdapter(val view: Context):RecyclerView.Adapter<DailyAdapter.Holder>(
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val member = listData[position]
         holder.setData(member, position)
-
-
     }
 
     //뷰 홀더
@@ -65,8 +60,7 @@ class DailyAdapter(val view: Context):RecyclerView.Adapter<DailyAdapter.Holder>(
     class Holder(val binding: ItemTodoListBinding) : ViewHolder(binding.root) {
         private val todoActivity = TodoActivity.getInstance()
         var mMember: DailyTodo? = null
-        var mPosition: Int? = null
-
+        private var mPosition: Int? = null
         init {
             binding.btnCheck.setOnClickListener {
                 //Check 표시 변경 가능 할 수 있는 기능
@@ -170,13 +164,13 @@ class DailyAdapter(val view: Context):RecyclerView.Adapter<DailyAdapter.Holder>(
                 binding.ivPhoto.setImageResource(R.drawable.iv_invisible_box)
             }else{
                 binding.ivPhoto.isEnabled = true
-                val path = "https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=1200&q=60"
+                //val path = "https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=1200&q=60"
+                val path = default_Address + mMember!!.imageUrl
 
-                //todo : http 이미지 를 못 불러 온다...
+                //todo : 이미지 를 불러 온다...
                 if(member.imageUrl != "EMPTY"){
                     Log.d("Yuri", "link : ${member.imageUrl}")
                     Glide.with(binding.ivPhoto.context)
-                        //.load(member.imageUrl)
                         .load(path)
                         .listener(object:RequestListener<Drawable>{
                             override fun onResourceReady(
@@ -198,7 +192,7 @@ class DailyAdapter(val view: Context):RecyclerView.Adapter<DailyAdapter.Holder>(
                                 return false
                             }
                         })
-                        .error(R.drawable.add_friends)
+                        .error(R.drawable.ic_leaf)
                         .transform(CenterCrop(), RoundedCorners(5))
                         .into(binding.ivPhoto)
                 }

@@ -62,7 +62,6 @@
         <activity android:name="com.example.greendar.ui.view.RegisterActivity"/>
         <activity android:name="com.example.greendar.ui.view.RegisterPasswordActivity"/>
         <activity android:name="com.example.greendar.ui.view.LoginActivity"/>
-        <activity android:name="com.example.greendar.ui.view.ChangePasswordActivity"/>
         <activity android:name="com.example.greendar.ui.view.ProfileSettingActivity"/>
 
         <activity

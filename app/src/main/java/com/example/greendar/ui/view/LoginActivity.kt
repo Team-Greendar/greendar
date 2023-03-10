@@ -9,8 +9,10 @@ import android.view.Window
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.example.greendar.R
 import com.example.greendar.data.api.RetrofitAPI
 import com.example.greendar.data.model.ResponseRegisterUser
+import com.example.greendar.data.recycler.UserInfo.token
 import com.example.greendar.databinding.ActivityLoginBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -67,12 +69,12 @@ class LoginActivity:AppCompatActivity() {
                             findUser(auth.currentUser?.uid.toString(), "normal")
                         } else{
                             //이메일 인증을 완료 하지 않음
-                            Toast.makeText(this, "이메일 인증을 완료 하지 않음", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "e-mail authentication is not completed.\nPlease check your e-mail", Toast.LENGTH_SHORT).show()
                         }
                     }
                     //회원 정보 없음
                     else{
-                        Toast.makeText(this, "Log in failed. Please check your e-mail and password again.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Log in failed.\nPlease check your e-mail and password again.", Toast.LENGTH_SHORT).show()
                     }
                 }
         }
@@ -87,10 +89,11 @@ class LoginActivity:AppCompatActivity() {
                 val account = task.getResult(ApiException::class.java)!!
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                 auth.signInWithCredential(credential)
-                    .addOnCompleteListener(this){task->
+                    .addOnCompleteListener(this){task ->
                         if(task.isSuccessful){
                             //구글 로그인 성공
                             //token O -> 메인 페이지, token X -> register_password
+                            Log.e("Yuri", "로그인 성공")
                             findUser(auth.currentUser?.uid.toString(), "com.google")
                         } else{
                             //구글 로그인 실패
@@ -106,12 +109,13 @@ class LoginActivity:AppCompatActivity() {
         binding.btnLoginGoogle.setOnClickListener {
             val gso = GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("923471445103-g69s7l8gp5qjh8k3phhb6fqnsojoee16.apps.googleusercontent.com")
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .requestProfile()
                 .build()
             val signInIntent = GoogleSignIn.getClient(this, gso).signInIntent
             requestLauncher.launch(signInIntent)
+            Log.e("Yuri", "google log in check") //kk
         }
     }
 
@@ -125,9 +129,12 @@ class LoginActivity:AppCompatActivity() {
                 ) {
                     if((response.body()?.header?.status == 200)) {
                         //토큰 존재 : move to Calendar
-                        Log.d("Yuri", "success")
-                        Toast.makeText(this@LoginActivity, "log in complete", Toast.LENGTH_SHORT)
-                            .show()
+                        //todo : 토큰으로 보낼지, 변수로 저장할지.. (만나서 고민)
+                        token = userToken
+                        Log.d("Yuri", "log in success")
+
+                        startActivity(Intent(this@LoginActivity, CalendarActivity::class.java))
+
                     }else if((response.body()?.header?.status == 500)){
                         //토큰 존재 X
                         if(provider == "com.google"){
@@ -246,7 +253,6 @@ class LoginActivity:AppCompatActivity() {
     private fun checkAuth():Boolean{
         val currentUser = auth.currentUser
         return currentUser?.let{
-            //email = currentUser.email
             currentUser.isEmailVerified
         } ?: let{
             false

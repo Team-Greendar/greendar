@@ -2,7 +2,6 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
-    //id 'kotlin-kapt'  //kapt glide 보고 삭제 여부 판단
 }
 
 android {
@@ -77,22 +76,17 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.2.1')
     implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
+
+    implementation 'com.google.firebase:firebase-analytics:21.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
 
-    //cloud storage
-    implementation 'com.google.firebase:firebase-storage-ktx'
 
     //okhttp3
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
 
-
     //glide
     implementation 'com.github.bumptech.glide:glide:4.15.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.15.0'
-    //kapt 'com.github.bumptech.glide:compiler:4.15.0'
-
-    //picasso
-    implementation 'com.squareup.picasso:picasso:2.71828'
 }

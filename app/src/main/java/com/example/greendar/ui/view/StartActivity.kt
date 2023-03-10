@@ -21,8 +21,8 @@ class StartActivity : AppCompatActivity(){
 
         //Register Activity 연결
         binding.btnRegister.setOnClickListener {
-            //startActivity(Intent(this@StartActivity, RegisterActivity::class.java))
-            startActivity(Intent(this@StartActivity, TodoActivity::class.java))
+            startActivity(Intent(this@StartActivity, RegisterActivity::class.java))
+            //startActivity(Intent(this@StartActivity, TodoActivity::class.java))
         }
 
         //Login Activity 연결

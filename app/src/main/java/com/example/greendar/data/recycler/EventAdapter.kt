@@ -17,6 +17,7 @@ import com.example.greendar.R
 import com.example.greendar.data.api.RetrofitAPI
 import com.example.greendar.data.model.PutEventTodoComplete
 import com.example.greendar.data.model.ResponseEventTodoComplete
+import com.example.greendar.data.recycler.UserInfo.default_Address
 import com.example.greendar.data.recycler.UserInfo.token
 import com.example.greendar.databinding.ItemTodoListBinding
 import com.example.greendar.ui.view.TodoActivity
@@ -44,7 +45,7 @@ class EventAdapter:RecyclerView.Adapter<EventAdapter.Holder>() {
     class Holder(val binding: ItemTodoListBinding):ViewHolder(binding.root){
         private val todoActivity = TodoActivity.getInstance()
         var mMember: EventTodo? = null
-        var mPosition: Int? = null
+        private var mPosition: Int? = null
 
         init{
             binding.btnCheck.setOnClickListener {
@@ -88,28 +89,17 @@ class EventAdapter:RecyclerView.Adapter<EventAdapter.Holder>() {
             if (mMember!!.imageUrl == "EMPTY") {
                 binding.ivPhoto.isEnabled = false
                 binding.ivPhoto.setImageResource(R.drawable.iv_invisible_box)
-                Glide.with(binding.ivPhoto).clear(binding.ivPhoto)
             } else {
                 binding.ivPhoto.isEnabled = true
-                var path = "https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=1200&q=60"
-                path = "https://storage.cloud.google.com/greendar_storage/test/Screenshot_20230222-182438_Greendar.jpg-q0l5Td.jpg"
+                //var path = "https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=1200&q=60"
+                //path = "https://storage.cloud.google.com/greendar_storage/test/Screenshot_20230222-182438_Greendar.jpg-q0l5Td.jpg"
 
-                //todo 2 : https reference 오류
-                //val storage = FirebaseStorage.getInstance()  -> 이거 dependencies 뭐지
-                //val httpsReference = storage.getReferenceFromUrl("https 주소")
-
-                /*Glide.with(context)
-                    .load(httpsReference)
-                    .placeholder(R.drawable.logo)
-                    .dontAnimate()
-                    .into(holder.horseImage)
-                * */
+                val path = default_Address + mMember!!.imageUrl
 
                 //todo : http 이미지 를 못 불러 온다...
                 if (member.imageUrl != "EMPTY") {
                     Log.d("Yuri", "link : ${member.imageUrl}")
                     Glide.with(binding.ivPhoto)
-                        //.load(member.imageUrl)
                         .load(path)
                         .listener(object : RequestListener<Drawable> {
                             override fun onResourceReady(
@@ -121,7 +111,6 @@ class EventAdapter:RecyclerView.Adapter<EventAdapter.Holder>() {
                             ): Boolean {
                                 return false
                             }
-
                             override fun onLoadFailed(
                                 e: GlideException?,
                                 model: Any?,
@@ -132,7 +121,7 @@ class EventAdapter:RecyclerView.Adapter<EventAdapter.Holder>() {
                                 return false
                             }
                         })
-                        .error(R.drawable.add_friends)
+                        .error(R.drawable.ic_leaf)
                         .transform(CenterCrop(), RoundedCorners(5))
                         .into(binding.ivPhoto)
                 }
