@@ -51,11 +51,6 @@ import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.*
 
-//todo 1: data 정보 binding 하기
-//todo 2: 이미지 glide api (ok)
-//todo 3: pop up translate to English (ok)
-//todo 4 : 값 넘어올 때 object에 정보 저장
-
 class TodoActivity: AppCompatActivity() {
     private lateinit var binding: ActivityTodoBinding
 
@@ -92,10 +87,6 @@ class TodoActivity: AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.title = ""
-
-        //todo 값 받아 오기 (object에 넣기.)
-
-
 
 
         //daily to-do 정보 불러옴
