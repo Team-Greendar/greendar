@@ -14,8 +14,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 /*
-TODO : 일반 회원 가입 - 비밀 번호 받고 인증 메일 보내기, 인증 해야 다음 페이지 로 넘어갈 수 있다.
-TODO : 구글 회원 가입 - 비밀 번호 받고 계정 관리로 넘어갈 수 있다.
+TO-DO : 일반 회원 가입 - 비밀 번호 받고 인증 메일 보내기, 인증 해야 다음 페이지 로 넘어갈 수 있다.
+TO-DO : 구글 회원 가입 - 비밀 번호 받고 계정 관리로 넘어갈 수 있다.
 */
 
 class RegisterPasswordActivity:AppCompatActivity() {
@@ -51,7 +51,7 @@ class RegisterPasswordActivity:AppCompatActivity() {
         }
 
         binding.btnBack.setOnClickListener {
-            startActivity(Intent(this@RegisterPasswordActivity, RegisterActivity::class.java))
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
 
         //일반 회원 가입 - 인증 이메일 전송 필요 - 인증 끝나면 로그인 까지 자동 완료 해주고 계정 설정 으로 넘어감
@@ -89,15 +89,15 @@ class RegisterPasswordActivity:AppCompatActivity() {
                                         //인증 메일 발송 성공
                                         Toast.makeText(
                                             this,
-                                            "인증 메일을 확인 해야 회원가입이 완료 됩니다.\n이메일 확인 해주고, 로그인 해서 Greendar를 사용해주세요",
-                                            Toast.LENGTH_SHORT
+                                            "Please check your e-mail to verify your account.\nThen, log in to enjoy Greendar!",
+                                            Toast.LENGTH_LONG
                                         ).show()
                                     } else {
                                         //인증 메일 발송 실패
                                         Toast.makeText(
                                             this,
-                                            "인증 메일 발송 실패. 이메일 주소를 다시 확인해주세요.",
-                                            Toast.LENGTH_SHORT
+                                            "Fail to send e-mail.\nPlease check your e-mail address again.",
+                                            Toast.LENGTH_LONG
                                         ).show()
                                     }
                                 }
@@ -134,7 +134,7 @@ class RegisterPasswordActivity:AppCompatActivity() {
                                         Log.d("Yuri", "이메일 인증 O, 비밀 번호 일치 X")
                                         Toast.makeText(
                                             this,
-                                            "비밀번호를 다시 확인 해주세요",
+                                            "wrong password",
                                             Toast.LENGTH_SHORT
                                         )
                                             .show()
@@ -144,11 +144,11 @@ class RegisterPasswordActivity:AppCompatActivity() {
                         //계정 등록 실패(이미 계정이 등록 되어 있는 상태) -> 이메일 인증 완료 X
                         else if (!checkAuth()) {
                             Log.d("Yuri", "이메일 인증 X")
-                            Toast.makeText(this, "이메일 인증을 다시 해주 세요.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Check your e-mail and complete the authentication", Toast.LENGTH_SHORT).show()
                         } else {
                             //계정 등록 실패 : 다양한 이유가 있지만 그 중 하나 이미 있는 계정 등
                             Log.w("Yuri", "createUserWithEmail:failure", task.exception)
-                            Toast.makeText(this, "회원 가입 실패", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Register fail", Toast.LENGTH_SHORT).show()
                         }
                     }
             }

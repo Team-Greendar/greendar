@@ -23,6 +23,7 @@ import com.example.greendar.data.api.RetrofitAPI
 import com.example.greendar.data.model.PostRegisterUser
 import com.example.greendar.data.model.ResponseProfileImage
 import com.example.greendar.data.model.ResponseRegisterUser
+import com.example.greendar.data.recycler.UserInfo
 import com.example.greendar.databinding.ActivityProfileSettingBinding
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -87,16 +88,6 @@ class ProfileSettingActivity:AppCompatActivity() {
         }
 
         binding.btnNext.setOnClickListener {
-            //TODO : multipart API
-            val file = File(filePath)
-            val requestBody = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-            val body = MultipartBody.Part.createFormData("file", file.name, requestBody)
-
-            Log.d("Yuri", "이미지 경로 : $filePath")
-            Log.d("Yuri", "body : $body")
-            postImage(body)  //여기서 절대 경로 획득
-
-            //TODO : data API
             val username = binding.textInputEditTextUsername.text.toString()
             val message = binding.textInputEditTextStatusMessage.text.toString()
 
@@ -115,7 +106,7 @@ class ProfileSettingActivity:AppCompatActivity() {
                     message
                 )
                 Log.d("Yuri", "imageUrl : $fileAddress, message: $message")
-                //todo
+
                 postUserInfo(postRegister, googleUid)
             }
             //일반 회원 가입
@@ -133,27 +124,24 @@ class ProfileSettingActivity:AppCompatActivity() {
     }
 
 
-    //TODO : API
+    //API - image multipart
     private fun postImage(body : MultipartBody.Part){
         RetrofitAPI.post.postSendProfileImage(body)
-            .enqueue(object:retrofit2.Callback<ResponseProfileImage>{
+            .enqueue(object : retrofit2.Callback<ResponseProfileImage> {
                 override fun onResponse(
                     call: Call<ResponseProfileImage>,
                     response: Response<ResponseProfileImage>
                 ) {
-                    if(response.body()?.header?.status == 500){
+                    if (response.body()?.header?.status == 500) {
                         Log.e("Yuri", "서버 로직 에러")
-                    }
-                    else if(response.body()?.header?.status == 405){
-                        Log.e("Yuri", "파일 형식 혹은 파일 파라미터의 이름 오류 혹은 파일 없음")
-                    }
-                    else if(response.body()?.header?.status == 200){
+                    } else if (response.body()?.header?.status == 405) {
+                        Log.e("Yuri", "파일 형식 혹은 파일 parameter 의 이름 오류 혹은 파일 없음")
+                    } else if (response.body()?.header?.status == 200) {
                         Log.e("Yuri", "서버 연결 and response 성공")
-                        Log.e("Yuri", "서버에서 받아온 주소 : ${response.body()?.body!!}")
+                        Log.e("Yuri", "서버 에서 받아온 주소 : ${response.body()?.body!!}")
                         fileAddress = response.body()?.body!!
                         Log.d("Yuri", "절대 경로 : $fileAddress")
-                    }
-                    else{
+                    } else {
                         Log.e("Yuri", "sth wrong...! OMG")
                         Log.e("Yuri", "error : ${response.body()?.header?.status}")
                         Log.e("Yuri", "error : ${response.body()?.header?.message}")
@@ -166,7 +154,7 @@ class ProfileSettingActivity:AppCompatActivity() {
             })
     }
 
-    //API
+    //API - send user info
     private fun postUserInfo(postRegister:PostRegisterUser, token:String){
         RetrofitAPI.post.postRegisterUser(postRegister)
             .enqueue(object:retrofit2.Callback<ResponseRegisterUser>{
@@ -177,16 +165,19 @@ class ProfileSettingActivity:AppCompatActivity() {
                     if(response.body()?.header?.status == 200){
                         if(response.body()?.header?.message == "SUCCESS"){
                             Log.e("Yuri", "로그인 성공")
-                            //todo 다음 으로 넘어감
-                            Toast.makeText(this@ProfileSettingActivity, "회원가입 성공. 다음으로 넘어감", Toast.LENGTH_SHORT).show()
+                            //todo : intent로 값 넘길 건지, 변수 저장 할 건지 고민
+                            UserInfo.token = token
 
+                            //다음 으로 넘어감
+                            Log.e("Yuri", "move to Calendar")
+                            Log.e("Yuri", "token : $token")
                             val intent = Intent(this@ProfileSettingActivity, CalendarActivity::class.java)
                             intent.putExtra("token", token)
                             startActivity(intent)
                         }
                         else{
-                            Log.e("Yuri", "이미 존재하는 닉네임이다")
-                            Toast.makeText(this@ProfileSettingActivity, "이미 존재하는 username입니다. 다시 입력해주세요.", Toast.LENGTH_SHORT).show()
+                            Log.e("Yuri", "이미 존재 하는 닉네임")
+                            Toast.makeText(this@ProfileSettingActivity, "This name already exists.\nPlease enter a new name", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -229,6 +220,15 @@ class ProfileSettingActivity:AppCompatActivity() {
 
                 //절대 경로
                 filePath = getRealPathFromURI(imageUri!!)
+
+                //todo
+                val file = File(filePath)
+                val requestBody = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                val body = MultipartBody.Part.createFormData("file", file.name, requestBody)
+
+                Log.d("Yuri", "이미지 경로 : $filePath")
+                Log.d("Yuri", "body : $body")
+                postImage(body)  //여기서 파일 경로 획득
             }
         }
     }

@@ -9,6 +9,7 @@ import android.view.Window
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.example.greendar.R
 import com.example.greendar.databinding.ActivityRegisterBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -56,7 +57,7 @@ class RegisterActivity:AppCompatActivity() {
                     } else {
                         //있는 유저
                         Log.d("Yuri", "이미 존재 하는 이메일")
-                        Toast.makeText(this, "이미 존재 하는 이메일 입니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Exist Account.", Toast.LENGTH_SHORT).show()
                     }
                 }
         }
@@ -76,7 +77,7 @@ class RegisterActivity:AppCompatActivity() {
                         if(task.isSuccessful){
                             //구글 회원 가입 성공
                             Toast.makeText(this, "register complete", Toast.LENGTH_SHORT).show()
-                            //TODO: 이메일 정보 가지고 다음 으로 넘어 가기
+                            //이메일 정보 가지고 다음 으로 넘어 가기
                             Log.d("Yuri", "googleEmail : ${auth.currentUser?.email}")
                             Log.d("Yuri", "provider : ${auth.currentUser!!.providerData[0]}")
                             Log.d("Yuri", "googleUid : ${auth.currentUser?.uid}")
@@ -107,7 +108,7 @@ class RegisterActivity:AppCompatActivity() {
                         //새로운 이메일
                         val gso = GoogleSignInOptions
                             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestIdToken("923471445103-g69s7l8gp5qjh8k3phhb6fqnsojoee16.apps.googleusercontent.com")
+                            .requestIdToken(getString(R.string.default_web_client_id))
                             .requestEmail()
                             .requestProfile()
                             .build()
@@ -115,7 +116,7 @@ class RegisterActivity:AppCompatActivity() {
                         requestLauncher.launch(signInIntent)
                     } else {
                         Log.d("Yuri", "Is Old User!")
-                        Toast.makeText(this, "이미 존재 하는 이메일 입니다. 로그인 진행해 주세요", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Exist e-mail.\nPlease Log in", Toast.LENGTH_SHORT).show()
                     }
                 }
         }

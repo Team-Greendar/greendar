@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,8 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.greendar.R
@@ -37,6 +34,7 @@ import com.example.greendar.data.recycler.DailyTodo
 import com.example.greendar.data.recycler.EventAdapter
 import com.example.greendar.data.recycler.EventTodo
 import com.example.greendar.data.recycler.UserInfo.date
+import com.example.greendar.data.recycler.UserInfo.default_Address
 import com.example.greendar.data.recycler.UserInfo.token
 import com.example.greendar.data.recycler.UserInfo.username
 import com.example.greendar.databinding.ActivityTodoBinding
@@ -49,8 +47,15 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.*
 
-//todo : 툴바 확인, 키보드 바로 올라 오게 하기
+//todo 1: data 정보 binding 하기
+//todo 2: 이미지 glide api (ok)
+//todo 3: pop up translate to English (ok)
+//todo 4 : 값 넘어올 때 object에 정보 저장
+
 class TodoActivity: AppCompatActivity() {
     private lateinit var binding: ActivityTodoBinding
 
@@ -88,7 +93,9 @@ class TodoActivity: AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.title = ""
 
-        //todo 값 받아오기
+        //todo 값 받아 오기 (object에 넣기.)
+
+
 
 
         //daily to-do 정보 불러옴
@@ -97,7 +104,7 @@ class TodoActivity: AppCompatActivity() {
         getEventTodoInfo(token, date)
 
         //activity 에 recycler 연결
-        dailyAdapter = DailyAdapter(this)
+        dailyAdapter = DailyAdapter()
         dailyAdapter!!.listData = dailyData
         binding.recyclerViewDailyTodo.adapter = dailyAdapter
         binding.recyclerViewDailyTodo.layoutManager = LinearLayoutManager(this)
@@ -109,66 +116,49 @@ class TodoActivity: AppCompatActivity() {
 
         init()
 
+        //todo 값 split : 2023-01-01
+        val splitDate = date.split("-")
+        Log.d("Yuri", "$splitDate")
+
+        //todo 달 구분
+        val monthEnglish = when(splitDate[1]){
+            "01" -> "January"
+            "02" -> "February"
+            "03" -> "March"
+            "04" -> "April"
+            "05" -> "May"
+            "06" -> "June"
+            "07" -> "July"
+            "08" -> "August"
+            "09" -> "September"
+            "10" -> "October"
+            "11" -> "November"
+            "12" -> "December"
+            else -> "Month not Found"
+        }
+
+        //todo 요일 찾기
+        val localDate = LocalDate.of(splitDate[0].toInt(), splitDate[1].toInt(), splitDate[2].toInt())
+        val dayOfWeek = localDate.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.US)
+
+        binding.year.text = splitDate[0]
+        binding.month.text = monthEnglish
+        binding.day.text = splitDate[2]
+        binding.dayOfWeek.text = dayOfWeek
+
+
         //to-do 4 : to-do 추가
         binding.dailyTodo.setOnClickListener {
             dailyData.add(DailyTodo(false, date, "EMPTY", username, 0, "", true))
             dailyAdapter?.notifyItemInserted(dailyData.size -1)
         }
 
-
-
-        var path = "https://storage.cloud.google.com/greendar_storage/test/Screenshot_20230222-182438_Greendar.jpg-q0l5Td.jpg"
-        path = "https://storage.googleapis.com/greendar_storage/test/20230204_222413.jpg-0K7aWe.jpg" //ok
-        //path ="https://storage.cloud.google.com/greendar_storage/test/20230204_222413.jpg-0K7aWe.jpg"
-
-        Glide.with(binding.textImage).load(path)
-            .listener(object:RequestListener<Drawable>{
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    return false
-                }
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    Log.e("Yuri", "fail : ${e.toString()}")
-                    return false
-                }
-            })
-            .error(R.drawable.add_friends)
-            .timeout(6000)
-            .transform(CenterCrop(), RoundedCorners(5))
-            .into(binding.textImage)
-
-        //.load(member.imageUrl)
-        //.diskCacheStrategy(DiskCacheStrategy.NONE)
-        //.skipMemoryCache(true)
-
-        /*val picasso = Picasso.Builder(this)
-            .listener { _, _, e ->
-                Log.e("Yuri", e.toString())
-                e.printStackTrace() }
-            .build()
-
-        picasso
-            .load(path)
-            .memoryPolicy(MemoryPolicy.NO_CACHE)
-            .error(R.drawable.add_friends)
-            .into(binding.textImage)*/
-
     }
 
     //daily 투두 일자별 검색
     private fun getDailyTodoInfo(token:String, date:String){
         RetrofitAPI.getDaily.getDailyTodo(token, date)
-            .enqueue(object:retrofit2.Callback<GetDailyTodo>{
+            .enqueue(object:Callback<GetDailyTodo>{
                 override fun onResponse(
                     call: Call<GetDailyTodo>,
                     response: Response<GetDailyTodo>
@@ -192,7 +182,7 @@ class TodoActivity: AppCompatActivity() {
     //event 투두 일자별 검색
     private fun getEventTodoInfo(token:String, date:String){
         RetrofitAPI.getEvent.getEventTodo(token, date)
-            .enqueue(object:retrofit2.Callback<GetEventTodo>{
+            .enqueue(object:Callback<GetEventTodo>{
                 override fun onResponse(
                     call: Call<GetEventTodo>,
                     response: Response<GetEventTodo>
@@ -279,9 +269,10 @@ class TodoActivity: AppCompatActivity() {
         val popBottom = bottomSheetDialog.findViewById<ConstraintLayout>(R.id.pop_bottom)
 
         //이미지 임시 코드
-        var path = "https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=1200&q=60"
-        path = "https://images.unsplash.com/photo-1677840147160-6545dba6f08d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
+        //var path = "https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=1200&q=60"
+        //path = "https://images.unsplash.com/photo-1677840147160-6545dba6f08d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
 
+        var path = default_Address + imageUrl
         tvTask?.text = task
         tvDate?.text = date
 
@@ -308,7 +299,7 @@ class TodoActivity: AppCompatActivity() {
                     return false
                 }
             })
-            .error(R.drawable.add_friends)
+            .error(R.drawable.ic_leaf)
             .into(image)
 
         image.setOnClickListener{
@@ -323,7 +314,6 @@ class TodoActivity: AppCompatActivity() {
                 popBottom?.visibility = View.VISIBLE
             }
         }
-
 
         bottomSheetDialog.show()
     }
@@ -431,7 +421,7 @@ class TodoActivity: AppCompatActivity() {
     //(api - 성공) to-do : 투두 삭제
     fun deleteDailyTodo(token:String, todoId:Int){
         RetrofitAPI.getDaily.deleteDailyTodo(token, todoId)
-            .enqueue(object:retrofit2.Callback<ResponseDeleteDailyTodo>{
+            .enqueue(object:Callback<ResponseDeleteDailyTodo>{
                 override fun onResponse(
                     call: Call<ResponseDeleteDailyTodo>,
                     response: Response<ResponseDeleteDailyTodo>
@@ -515,7 +505,7 @@ class TodoActivity: AppCompatActivity() {
     //(api - 성공) to-do : daily to-do 이미지 추가
     private fun putDailyImage(token:String, body:MultipartBody.Part, id:Int, position:Int){
         RetrofitAPI.getDaily.putDailyImage(token, body, id)
-            .enqueue(object:retrofit2.Callback<ResponseDailyNewTodo>{
+            .enqueue(object:Callback<ResponseDailyNewTodo>{
                 override fun onResponse(
                     call: Call<ResponseDailyNewTodo>,
                     response: Response<ResponseDailyNewTodo>
@@ -573,7 +563,7 @@ class TodoActivity: AppCompatActivity() {
         Log.d("Yuri", "token : $token")
         Log.d("Yuri", "id : $id")
         RetrofitAPI.getDaily.deleteDailyTodoImage(token, id)
-            .enqueue(object:retrofit2.Callback<ResponseDailyTodoImage>{
+            .enqueue(object:Callback<ResponseDailyTodoImage>{
                 override fun onResponse(
                     call: Call<ResponseDailyTodoImage>,
                     response: Response<ResponseDailyTodoImage>
@@ -600,7 +590,7 @@ class TodoActivity: AppCompatActivity() {
     //(api - 성공) to-do : event to-do 이미지 삭제
     private fun deleteEventTodoImage(token:String, id:Int, position: Int){
         RetrofitAPI.getEvent.deleteEventTodoImage(token, id)
-            .enqueue(object:retrofit2.Callback<ResponseDeleteEventImage>{
+            .enqueue(object:Callback<ResponseDeleteEventImage>{
                 override fun onResponse(
                     call: Call<ResponseDeleteEventImage>,
                     response: Response<ResponseDeleteEventImage>
@@ -693,10 +683,11 @@ class TodoActivity: AppCompatActivity() {
     }
 
     //todo : keyboard
+    /*
     fun keyboardDown(view:View){
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
-    }
+    }*/
 
     //appBar goBack
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
