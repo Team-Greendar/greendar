@@ -201,9 +201,10 @@ class CalendarActivity : AppCompatActivity() {
                     val EventTodoRatio = response.body()
                     val bodyList = EventTodoRatio?.body?.ratio
 
-                    val result: String = "<font color='#6B9AC4'><strong>ECO TO-DO</strong></font> COMPLETION RATE is <font color='#6B9AC4'><strong>${bodyList}</strong></font>%"
 
-                    val selectedMonthTextView: TextView = findViewById(R.id.month_text)
+                    val result: String = "<font color='#F4B942'><strong>Eco TO-DO</strong></font> COMPLETION RATE is <font color='#F4B942'><strong>${bodyList}</strong></font>%"
+
+                    val selectedMonthTextView: TextView = findViewById(R.id.eventTODO_month_text)
                     selectedMonthTextView.text = fromHtml(result)
                     //Log.d("hhh", "Event(Eco) 연결 확인 중3")
                 }else{
@@ -245,8 +246,8 @@ class CalendarActivity : AppCompatActivity() {
                     val privateRatio = myData?.body?.ratio
                     //data 파싱
 
-                    val result: String = "<font color='#F4B942'><strong>ECO TO-DO</strong></font> COMPLETION RATE is <font color='#F4B942'><strong>${privateRatio}</strong></font>%"
-                    val selectedMonthTextView: TextView = findViewById(R.id.eventTODO_month_text)
+                    val result: String = "<font color='#6B9AC4'><strong>Daily TO-DO</strong></font> COMPLETION RATE is <font color='#6B9AC4'><strong>${privateRatio}</strong></font>%"
+                    val selectedMonthTextView: TextView = findViewById(R.id.month_text)
                     selectedMonthTextView.text = fromHtml(result)
                     Log.d("hhh", "Private(DAILY) 연결 확인 중3")
                 }else{
