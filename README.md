@@ -3,7 +3,7 @@
 
 ## 👩‍💻Introducing Android TeamMate
 
-|<img src="https://github.com/~~~.png" width="80">|<img src="https://github.com/~~~.png" width="80">|
+|<img src="https://user-images.githubusercontent.com/114340019/215017598-9624c0da-36aa-4ddb-baa1-570ea8f42444.png" width="80">|<img src="https://github.com/~~~.png" width="80">|
 |:---:|:---:|
 |[https://github.com/Arielle0222](https://github.com/Arielle0222)|[https://github.com/jorippppong](https://github.com/jorippppong)|
 |김서희 (Seohee Kim)|조유리 (Yuri Cho)|
