@@ -114,6 +114,7 @@ class LoginActivity:AppCompatActivity() {
                 .requestProfile()
                 .build()
             val signInIntent = GoogleSignIn.getClient(this, gso).signInIntent
+            Log.e("Yuri", "gso : $gso")
             requestLauncher.launch(signInIntent)
             Log.e("Yuri", "google log in check") //kk
         }
