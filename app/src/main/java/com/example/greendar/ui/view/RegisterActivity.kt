@@ -112,6 +112,8 @@ class RegisterActivity:AppCompatActivity() {
                             .requestEmail()
                             .requestProfile()
                             .build()
+
+                        Log.d("Yuri", "asd!")
                         val signInIntent = GoogleSignIn.getClient(this, gso).signInIntent
                         requestLauncher.launch(signInIntent)
                     } else {

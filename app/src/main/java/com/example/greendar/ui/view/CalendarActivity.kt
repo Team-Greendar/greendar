@@ -24,6 +24,7 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.greendar.data.api.EventTodoRatioInterface
+import com.example.greendar.data.recycler.EventTodo
 import com.example.greendar.data.recycler.UserInfo
 import com.example.greendar.data.recycler.UserInfo.token
 import com.example.greendar.model.EventTodoRatio
@@ -33,6 +34,7 @@ import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
 import com.prolificinteractive.materialcalendarview.spans.DotSpan
+import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -90,31 +92,9 @@ class CalendarActivity : AppCompatActivity() {
         }
 
 
-        //[캘린더] 1. 변수선언 및 특정 날짜(2023-3-10)에 도트 찍기
-        val calendarView: MaterialCalendarView = findViewById(R.id.calendarView)
-        /*Log.d("hhh","dot check1")
-        val date : CalendarDay = CalendarDay.from(2023,3,13)
-        Log.d("hhh","dot check2")
-        val dot : Drawable? = ContextCompat.getDrawable(this,R.drawable.dot)
 
-        class DotDecorator(private val drawable: Drawable, private val date: CalendarDay) : DayViewDecorator{
-            override fun shouldDecorate(day: CalendarDay): Boolean {
-                return day == date // date에 지정한 날짜에만 도트 찍기 True로 반환
-            }
-
-            override fun decorate(view: DayViewFacade) {
-                val dotSize = 10 // 점의 크기
-                val dotColor = Color.BLUE// 점의 색상
-                val dotSpan = DotSpan(dotSize.toFloat(), dotColor)
-                view.addSpan(dotSpan)
-                Log.d("hhh","dot check3")
-            }
-        }
-        val decorator = DotDecorator(dot!!, date)
-        calendarView.addDecorator(decorator)
-        Log.d("hhh","dot check4")
-*/
         //[캘린더] 1. 변수선언
+        val calendarView: MaterialCalendarView = findViewById(R.id.calendarView)
         val selectedDateTextView: TextView = findViewById(R.id.day_text)
 
         //[API] token, date 변수 선언
@@ -141,14 +121,16 @@ class CalendarActivity : AppCompatActivity() {
         }
 
 
-        //[캘린더] 2. 텍스트뷰에 불러오기(Month): Event, Private 둘다
+        //[캘린더] 2. 텍스트뷰에 불러오기(Month): Event(Eco), Private(Daily) 둘다
         calendarView.setOnMonthChangedListener { _, date ->
             val formattedMonth =
                 SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date?.date!!)
+
             //selectedMonthTextView.text = formattedMonth
             //selectedEventMonthTextView.text=formattedMonth
             selectedDateTextView.text = formattedMonth.substring(0, 7)
             month=formattedMonth.toString()
+
             getMyData(month) //API Daily
             getEventTodoRatio(month)//API Eco
 
@@ -192,104 +174,94 @@ class CalendarActivity : AppCompatActivity() {
     }
 
 
-    //[API] @Get PrivateMonthRatioInterface 연결
-    private fun getMyData(month:String){
-        val retrofitBuilder = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BASE_URL)
-            .build()
-            .create(PrivateMonthRatioInterface::class.java)
-        Log.d("hhh", "Private 연결 확인 중1")
-
-
-        //ProfileSetting 183 Token Receive
-        //val token : String? = intent.getStringExtra("token")
-        val retrofitData = retrofitBuilder.getData(token = token, date = month)
-        Log.d("hhh", "Private Token : $token")
-
-
-        retrofitData.enqueue(object : Callback<MyData?> {
-            override fun onResponse(call: Call<MyData?>, response: Response<MyData?>) {
-                Log.d("hhh", "Private 연결 확인 중2")
-                Log.d("hhh", "${response.code()}")
-
-
-                if(response.isSuccessful){
-                    //ratio만 리스트(bodyList 변수로 선언)로 받아오려고 추가한 변수들
-                    val myData = response.body()
-                    val bodyList = myData?.body
-                    val ratioList = bodyList?.map { it.ratio }
-                    val ratioSum = ratioList?.sum()
-
-                    val result: String = "<font color='#F4B942'><strong>ECO TO-DO</strong></font> COMPLETION RATE is <font color='#F4B942'><strong>${ratioSum}</strong></font>%"
-                    val selectedMonthTextView: TextView = findViewById(R.id.eventTODO_month_text)
-                    selectedMonthTextView.text = fromHtml(result)
-                    Log.d("hhh", "Private 연결 확인 중3")
-                }else{
-                    Log.d("hhh", "연결 실패")
-                }
-
-            }
-
-            override fun onFailure(call: Call<MyData?>, t: Throwable) {
-                Toast.makeText(this@CalendarActivity, "서버 로직 에러", Toast.LENGTH_LONG).show()
-                Log.d("hhh", "서버 로직 에러")
-            }
-        })
-
-
-    }
-
-    //[API] @Get EventTodoRatioInterface 연결
+    //[API] @Get Event(ECO)TodoRatioInterface 연결
     private fun getEventTodoRatio(month:String){
         val retrofitBuilder = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(BASE_URL)
             .build()
             .create(EventTodoRatioInterface::class.java)
-        Log.d("hhh", "Event 연결 확인 중1")
+        //Log.d("hhh", "Event(Eco) 연결 확인 중1")
 
 
         //ProfileSetting 183 Token Receive
         //todo
-        //val token : String? = intent.getStringExtra("token")
         val retrofitData = retrofitBuilder.getData(token = token , date = month)
-        Log.d("hhh", "Event Token : $token")
+        //Log.d("hhh", "Event(Eco) Token : $token")
 
 
         retrofitData.enqueue(object : Callback<EventTodoRatio?> {
             override fun onResponse(call: Call<EventTodoRatio?>, response: Response<EventTodoRatio?>) {
-                Log.d("hhh", "Event 연결 확인 중2")
-                Log.d("hhh", "${response.code()}")
+                //Log.d("hhh", "Event(Eco) 연결 확인 중2")
+                //Log.d("hhh", "${response.code()}")
 
 
                 if(response.isSuccessful){
                     //ratio만 리스트(bodyList 변수로 선언)로 받아오려고 추가한 변수들
-                    val myData = response.body()
-                    val bodyList = myData?.body
-                    val ratioList = bodyList?.map { it.ratio }
-                    val ratioSum = ratioList?.sum()
+                    val EventTodoRatio = response.body()
+                    val bodyList = EventTodoRatio?.body?.ratio
 
-                    val result: String = "<font color='#6B9AC4'><strong>DAILY TO-DO</strong></font> COMPLETION RATE is <font color='#6B9AC4'><strong>${ratioSum}</strong></font>%"
+                    val result: String = "<font color='#6B9AC4'><strong>ECO TO-DO</strong></font> COMPLETION RATE is <font color='#6B9AC4'><strong>${bodyList}</strong></font>%"
+
                     val selectedMonthTextView: TextView = findViewById(R.id.month_text)
                     selectedMonthTextView.text = fromHtml(result)
-                    /*val result = "Eco TO-DO COMPLETION RATE is ${ratioSum}%"
-                    val selectedEventMonthTextView: TextView = findViewById(R.id.eventTODO_month_text)
-                    selectedEventMonthTextView.text = result
-                    */Log.d("hhh", "Event 연결 확인 중3")
+                    //Log.d("hhh", "Event(Eco) 연결 확인 중3")
                 }else{
-                    Log.d("hhh", "연결 실패")
+                    //Log.d("hhh", "연결 실패(Eco)")
                 }
             }
             override fun onFailure(call: Call<EventTodoRatio?>, t: Throwable) {
                 Toast.makeText(this@CalendarActivity, "서버 로직 에러", Toast.LENGTH_LONG).show()
-                Log.d("hhh", "서버 로직 에러")
+                //Log.d("hhh", "서버 로직 에러(Eco)")
             }
         })
 
 
     }
 
+    //[API] @Get Private(DAILY)MonthRatioInterface 연결
+    private fun getMyData(month:String){
+        val retrofitBuilder = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(BASE_URL)
+            .build()
+            .create(PrivateMonthRatioInterface::class.java)
+        Log.d("hhh", "Private(DAILY) 연결 확인 중1")
+
+
+        //ProfileSetting 183 Token Receive
+        val retrofitData = retrofitBuilder.getData(token = token, date = month)
+        Log.d("hhh", "Private(DAILY) Token : $token")
+
+        retrofitData.enqueue(object : Callback<MyData?> {
+            override fun onResponse(call: Call<MyData?>, response: Response<MyData?>) {
+                Log.d("hhh", "Private(DAILY) 연결 확인 중2")
+                Log.d("hhh", "${response.code()}")
+
+
+                if(response.isSuccessful){
+                    //ratio만 리스트(bodyList 변수로 선언)로 받아오려고 추가한 변수들
+                    val myData = response.body()
+                    val privateRatio = myData?.body?.ratio
+                    //data 파싱
+
+                    val result: String = "<font color='#F4B942'><strong>ECO TO-DO</strong></font> COMPLETION RATE is <font color='#F4B942'><strong>${privateRatio}</strong></font>%"
+                    val selectedMonthTextView: TextView = findViewById(R.id.eventTODO_month_text)
+                    selectedMonthTextView.text = fromHtml(result)
+                    Log.d("hhh", "Private(DAILY) 연결 확인 중3")
+                }else{
+                    Log.d("hhh", "연결 실패(DAILY)")
+                }
+            }
+
+
+            override fun onFailure(call: Call<MyData?>, t: Throwable) {
+                Toast.makeText(this@CalendarActivity, "서버 로직 에러", Toast.LENGTH_LONG).show()
+                Log.d("hhh", "서버 로직 에러(DAILY)")
+            }
+        })
+
+    }
 }
 
 
