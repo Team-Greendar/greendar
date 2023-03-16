@@ -61,8 +61,6 @@
             </intent-filter>-->
         </activity>
 
-        
-
 
         <activity android:name="com.example.greendar.ui.view.RegisterActivity"/>
         <activity android:name="com.example.greendar.ui.view.RegisterPasswordActivity"/>
