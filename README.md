@@ -1,5 +1,13 @@
 # 🌳Greendar🌳
 > A calendar that adds an environment to your daily routine.
+<div align="start">
+  <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=Kotlin&logoColor=white" />
+    <img src="https://img.shields.io/badge/AndroidStudio-3DDC84?style=flat&logo=AndroidStudio&logoColor=white" />
+  <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=Firebase&logoColor=white" />
+  <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat&logo=Figma&logoColor=white" />
+  <img src="https://img.shields.io/badge/Notion-000000?style=flat&logo=Notion&logoColor=white" />
+</div>
+<br>
 
 ## 👩‍💻Introducing Android TeamMate
 
@@ -8,9 +16,14 @@
 |[https://github.com/Arielle0222](https://github.com/Arielle0222)|[https://github.com/jorippppong](https://github.com/jorippppong)|
 |김서희 (Seohee Kim)|조유리 (Yuri Cho)|
 
-## 🔎SDGs
+## 📷URL and Video
+* APK
+* Video
+
+## 🔎SDGs (Sustainable Development Goals)
 * 11(Sustainable cities and Communities), 
 * 15 (Life On Land)
+
 
 ## 💡Idea of making Greendar
  If you look at the calendar with your busy schedule, there are many small anniversaries, such as World Forest Day on March 21, World Honeybee Day on March 20, and International Clean Air Day on July 7. But this day often passes by without even knowing what kind of day it is, what it is doing, or what it is for.
@@ -24,6 +37,9 @@
 <img src="https://github.com/~~~.png" width="80">
 
 ### Service Detail Features
+> Sign up, Sign in
+1. Sign up and Sign in can be performed with the technology provided by Firebase and Greendor itself.
+2. You can Sign up and Sign in through your Google account using Firebase.
 > Calendar
 1. The TO DO solved in the month is converted into % and shown
 2. Pressing a date will move you to the TO DO list for that day.
