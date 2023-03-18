@@ -33,8 +33,15 @@
  In other words, it is not easy for people living in our city to worry about other additional problems because their daily lives are busy. So I thought it would be nice to have a service for busy city people, a service that specifically tells them when and how to act to alleviate environmental problems, and a service that can melt into their daily lives.
 
 ## 📱UI / UX
-(figma image 추가)
-<img src="https://github.com/~~~.png" width="80">
+
+<table>
+  <tr>
+    <td><img src="https://user-images.githubusercontent.com/114340019/226095196-2747cae1-358c-440b-a8bd-4abfb9e7b67f.jpg" width="135" height="300"/></td>
+    <td><img src="https://user-images.githubusercontent.com/114340019/226095509-f8f4f01b-695b-4347-af81-ebdc7fe69df4.jpg" width="135" height="300"></td>
+    <td><img src="https://user-images.githubusercontent.com/114340019/226095747-c184c5e9-edb2-416d-8d83-787b62e9cc40.png" width="135" height="300"></td>
+    <td><img src="https://user-images.githubusercontent.com/114340019/226095712-9f05c681-da88-401a-bf97-28a53a4331bb.jpg" width="135" height="300"></td>
+  </tr>
+</table>
 
 ### Service Detail Features
 > Sign up, Sign in
