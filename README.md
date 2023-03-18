@@ -51,6 +51,7 @@
 1. The TO DO solved in the month is converted into % and shown
 2. Pressing a date will move you to the TO DO list for that day.
 3. The bottom shows endangered animals and plants, and when you touch the image, you go to the page where you can see detailed explanations.
+4. Clicking on the button below will redirect you to the ICUN website, where you can access detailed information about endangered species.
 > TO DO list
 1. When TO DO is completed, touch the check button to indicate completion.
 2. You can upload and delete photos related to TO DO.
