@@ -11,7 +11,7 @@
 
 ## 👩‍💻Introducing Android TeamMate
 
-|<img src="https://user-images.githubusercontent.com/114340019/215017598-9624c0da-36aa-4ddb-baa1-570ea8f42444.png" width="80">|<img src="https://github.com/~~~.png" width="80">|
+|<img src="https://user-images.githubusercontent.com/114340019/215017598-9624c0da-36aa-4ddb-baa1-570ea8f42444.png" width="120">|<img src="https://user-images.githubusercontent.com/113884028/226110874-6637d28a-7ff2-4881-a238-8aa5e2054b69.jpg" width="120">|
 |:---:|:---:|
 |[https://github.com/Arielle0222](https://github.com/Arielle0222)|[https://github.com/jorippppong](https://github.com/jorippppong)|
 |김서희 (Seohee Kim)|조유리 (Yuri Cho)|
