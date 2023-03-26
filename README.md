@@ -17,7 +17,7 @@
 |김서희 (Seohee Kim)|조유리 (Yuri Cho)|
 
 ## 📷URL and Video
-* APK
+* [APK](https://github.com/Team-Greendar/greendar/blob/develop/app/release/Greendar.apk)
 * Video
 
 ## 🔎SDGs (Sustainable Development Goals)
