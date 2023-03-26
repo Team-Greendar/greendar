@@ -69,11 +69,11 @@
 
 
         <android.widget.Button
-            android:id="@+id/btn_sendNumber"
+            android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/button_green_background"
-            android:text="Get certification code via e-mail"
+            android:text="Register"
             android:textAllCaps="false"
             android:textColor="@color/semi_white"
             android:textSize="17sp"
@@ -92,7 +92,7 @@
             android:gravity="center_horizontal|center_vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_sendNumber">
+            app:layout_constraintTop_toBottomOf="@id/btn_register">
 
             <View
                 android:layout_width="150dp"

@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -9,12 +10,13 @@ android {
 
     defaultConfig {
         applicationId "com.example.greendar"
-        minSdk 21
+        minSdk 26
         targetSdk 33
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -30,26 +32,61 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    dataBinding{
+        enabled = true
+    }
+
+
     viewBinding{
         enabled = true
     }
+
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'de.hdodenhof:circleimageview:2.2.0'  //동그라미 프로필
-    implementation 'com.google.android.material:material:1.2.1'  //edittext 커스텀
-    implementation 'com.google.android.material:material:1.5.0-alpha02'  //bottom sheet navigation
-
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.2'
+
+    //material-calendarView
+    implementation 'com.prolificinteractive:material-calendarview:1.4.3'
+
+
+    //gson, retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'  //값이 scalar 로 온다..?
+
+    //recyclerView
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
+
+    implementation 'de.hdodenhof:circleimageview:2.2.0'  //circle 프로필
+    implementation 'com.google.android.material:material:1.8.0'  //edittext 커스텀
+    implementation 'com.google.android.material:material:1.9.0-alpha02'  //bottom sheet navigation
+
+    //로그인, 회원 가입 설정
+    implementation platform('com.google.firebase:firebase-bom:31.2.1')
+    implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+
+    implementation 'com.google.firebase:firebase-analytics:21.2.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+
+    //okhttp3
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
+
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.15.0'
+    implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.15.0'
 }

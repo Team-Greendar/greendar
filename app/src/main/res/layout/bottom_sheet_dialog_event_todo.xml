@@ -2,10 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_sheet_background"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     >
+
 
     <View
         android:id="@+id/view"
@@ -18,34 +20,35 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/tv_todo_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="use tumbler"
         android:textColor="@color/black"
-
-        android:textSize="25sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_upload_photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5"
-        android:background="@drawable/square_gray_title"
-        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="20dp"
-        android:text="verify photo"
-        android:textAllCaps="false"
-        android:textSize="25sp"
+        android:layout_marginVertical="20dp"
+        android:background="@drawable/square_gray_title"
         android:drawableStart="@drawable/ic_background_image"
         android:paddingHorizontal="100dp"
-        />
+        android:text="upload photo"
+        android:textAllCaps="false"
+        android:textSize="17sp"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_todo_text" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

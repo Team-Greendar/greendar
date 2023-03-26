@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.greendar.ui.view.CalendarActivity"
+    android:paddingTop="10dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/calendar_bottom_box_group"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Calendar"
+        android:textColor="#ABABAB"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:gravity="center"
+        tools:ignore="MissingConstraints" />
+
+
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="500dp"
+        android:layout_height="400dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
+        app:mcv_selectionColor="@color/main_color"
+        app:mcv_showOtherDates="all" />
+
+    <TextView
+        android:id="@+id/day_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="-5dp"
+        android:layout_marginTop="450dp"
+        android:gravity="center"
+        android:text="Today's YYYY-MM"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/month_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="-5dp"
+        android:layout_marginTop="490dp"
+        android:gravity="center"
+        android:text="Daily To-Do Completion Rate" />
+
+    <TextView
+        android:id="@+id/eventTODO_month_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="-5dp"
+        android:layout_marginTop="470dp"
+        android:gravity="center"
+        android:text="Eco To-Do Completion Rate" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/calendar_click_website"
+        android:textColor="#ffffff"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="272dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/calendar_click_website1"
+        android:textColor="#ffffff"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="13dp"
+        app:srcCompat="@drawable/redlist" />
+
+    <ImageButton
+        android:id="@+id/redlist_click_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="4dp"
+        android:backgroundTint="#00000000"
+        app:srcCompat="@drawable/redlist_site_click_button" />
+
+
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="245dp"
+        android:layout_marginBottom="14dp"
+        app:srcCompat="@drawable/redlist_site_click" />
+
+    <ImageView
+        android:id="@+id/holly_fix"
+        android:layout_width="129dp"
+        android:layout_height="88dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="67dp"
+        app:srcCompat="@drawable/holly" />
+
+
+    <ImageButton
+        android:id="@+id/image_change_btn"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="140dp"
+        android:layout_marginBottom="59dp"
+        android:backgroundTint="#00000000"
+        app:srcCompat="@android:drawable/stat_notify_sync_noanim" />
+
+    <TextView
+        android:id="@+id/holly_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="81dp"
+        android:text="Holly"
+        android:textColor="@color/white"
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/holly_geographic_range_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="65dp"
+        android:text="@string/calendar_change_image_1"
+        android:textColor="#6B9AC4"
+        android:textSize="12dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/holly_geographic_range_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="50dp"
+        android:text="@string/calendar_change_image_2"
+        android:textColor="@color/white"
+        android:textSize="13dp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="380dp"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="110dp"
+        android:layout_marginBottom="40dp"
+        android:background="#FF0B0B" />
+
+
+</RelativeLayout>

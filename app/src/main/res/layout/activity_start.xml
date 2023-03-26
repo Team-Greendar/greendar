@@ -8,10 +8,9 @@
     >
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="15dp"
-            >
+            android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/imageView"
@@ -29,6 +28,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Start your daily \nEarth saving routines"
+                    android:layout_marginTop="10dp"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="30sp"
@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:paddingHorizontal="15dp"
-                    android:text="We will provide you with a routine suitable for the environmental anniversary, and your can make it yourself!"
+                    android:text="We will provide you with a routine suitable\nfor the environmental anniversary,\nand your can make it yourself!"
                     android:textAlignment="center"
                     android:textColor="@color/gray"
                     android:textSize="17sp"
@@ -73,14 +73,14 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_white_background"
                     android:text="Log in"
-                    android:textColor="@color/main_color"
                     android:textAllCaps="false"
+                    android:textColor="@color/main_color"
                     android:textSize="17sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
