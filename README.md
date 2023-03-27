@@ -18,7 +18,7 @@
 
 ## 📷URL and Video
 * APK [Download](https://github.com/Team-Greendar/greendar/raw/develop/app/release/Greendar.apk)
-* Video 
+* Video [https://youtu.be/aUiaK_zgogw](https://youtu.be/aUiaK_zgogw)
 
 ## 🔎SDGs (Sustainable Development Goals)
 * 11(Sustainable cities and Communities), 
