@@ -17,8 +17,8 @@
 |김서희 (Seohee Kim)|조유리 (Yuri Cho)|
 
 ## 📷URL and Video
-* [APK](https://github.com/Team-Greendar/greendar/raw/develop/app/release/Greendar.apk)
-* Video
+* APK [Download](https://github.com/Team-Greendar/greendar/raw/develop/app/release/Greendar.apk)
+* Video 
 
 ## 🔎SDGs (Sustainable Development Goals)
 * 11(Sustainable cities and Communities), 
