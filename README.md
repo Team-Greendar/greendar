@@ -1,7 +1,4 @@
 # 🌳Greendar🌳
-<!--
-마크다운으로 주석 처리 가능
--->
 > A calendar that adds an environment to your daily routine.
 <div align="start">
   <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=Kotlin&logoColor=white" />
@@ -37,6 +34,7 @@
 
 ## 📱UI / UX
 
+<!-- 잠시 주석 처리
 <table>
   <tr>
     <td><img src="https://user-images.githubusercontent.com/114340019/226095196-2747cae1-358c-440b-a8bd-4abfb9e7b67f.jpg" width="140" height="300"/></td>
@@ -61,6 +59,7 @@
     <td><img src="https://user-images.githubusercontent.com/113884028/226111063-a9f8ae4e-120a-4469-83c4-ee25e69247ea.jpg" width="140" height="300"></td>
   </tr>
 </table>
+-->
 
 ### Service Detail Features
 > Sign up, Sign in
